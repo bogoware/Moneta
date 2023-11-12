@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{002F870F-F7E1-45DE-A744-565A128159A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A356C047-C850-484F-AB5E-14DD2BD1DF95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2BC899C6-C4D6-476B-99F9-D2FCC3E55CD7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logo", "logo", "{9D79B053-C5CF-467A-80B0-AC6253FFC7A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money", "src\Money\Money.csproj", "{19B8BBF5-431F-436E-91B2-D272CDCA19B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.Conversion", "src\Money.Conversion\Money.Conversion.csproj", "{43DC17BC-E6DA-450C-9197-BC41783ABA63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.Format", "src\Money.Format\Money.Format.csproj", "{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.UnitTests", "test\Money.UnitTests\Money.UnitTests.csproj", "{70C0DC69-E4BB-496D-BC09-4E219BA37D24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{19B8BBF5-431F-436E-91B2-D272CDCA19B2} = {002F870F-F7E1-45DE-A744-565A128159A4}
+		{43DC17BC-E6DA-450C-9197-BC41783ABA63} = {002F870F-F7E1-45DE-A744-565A128159A4}
+		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00} = {002F870F-F7E1-45DE-A744-565A128159A4}
+		{70C0DC69-E4BB-496D-BC09-4E219BA37D24} = {A356C047-C850-484F-AB5E-14DD2BD1DF95}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19B8BBF5-431F-436E-91B2-D272CDCA19B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19B8BBF5-431F-436E-91B2-D272CDCA19B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19B8BBF5-431F-436E-91B2-D272CDCA19B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19B8BBF5-431F-436E-91B2-D272CDCA19B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43DC17BC-E6DA-450C-9197-BC41783ABA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43DC17BC-E6DA-450C-9197-BC41783ABA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43DC17BC-E6DA-450C-9197-BC41783ABA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43DC17BC-E6DA-450C-9197-BC41783ABA63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
