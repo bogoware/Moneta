@@ -159,7 +159,7 @@ public class Money : IEquatable<Money>
 	public static Money operator /(Money left, decimal right)
 	{
 		var returnValue = left.Divide(right, out var residue);
-		left.Context.AddResidualAmount(residue);
+		left.Context.AddDivisionErrorRounding(residue);
 		return returnValue;
 	}
 
