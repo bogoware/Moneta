@@ -21,12 +21,11 @@ public class MoneySplitTests
 		var parts = moneyValue.Split(numberOfParts, out var residue);
 		
 		// Assert
-		var expectedPart = new Money(expectedPartAmount, Currency.Undefined, moneyContext);
+		var expectedPart = moneyContext.NewMoney(expectedPartAmount, Currency.Undefined);
 		
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
-		residue.Amount.Should().Be(expectedResidueAmount);
-		residue.Currency.Should().Be(moneyValue.Currency);
+		residue.Should().Be(expectedResidueAmount);
 	}
 
     public static IEnumerable<object[]> GetSplitByPartsData()
