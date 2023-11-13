@@ -11,13 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2BC899C6-C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logo", "logo", "{9D79B053-C5CF-467A-80B0-AC6253FFC7A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money", "src\Money\Money.csproj", "{19B8BBF5-431F-436E-91B2-D272CDCA19B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta", "src\Moneta\Moneta.csproj", "{19B8BBF5-431F-436E-91B2-D272CDCA19B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.Conversion", "src\Money.Conversion\Money.Conversion.csproj", "{43DC17BC-E6DA-450C-9197-BC41783ABA63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta.Conversion", "src\Moneta.Conversion\Moneta.Conversion.csproj", "{43DC17BC-E6DA-450C-9197-BC41783ABA63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.Format", "src\Money.Format\Money.Format.csproj", "{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta.Format", "src\Moneta.Format\Moneta.Format.csproj", "{CF60A82C-17BD-43B8-94DE-9D0228B4CD00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Money.UnitTests", "test\Money.UnitTests\Money.UnitTests.csproj", "{70C0DC69-E4BB-496D-BC09-4E219BA37D24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta.UnitTests", "test\Moneta.UnitTests\Moneta.UnitTests.csproj", "{70C0DC69-E4BB-496D-BC09-4E219BA37D24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
