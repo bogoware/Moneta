@@ -8,13 +8,13 @@ public sealed class MonetaryContext
 	/// <summary>
 	/// The default <see cref="Currency"/> for monetary operations
 	/// </summary>
-	public Currency DefaultCurrency { get; }
+	public ICurrency DefaultCurrency { get; }
 
 	/// <summary>
-	/// The default rounding mode for monetary operations
+	/// The default roundingMode mode for monetary operations
 	/// belonging to the context.
 	/// </summary>
-	public MidpointRounding Rounding { get; }
+	public MidpointRounding RoundingMode { get; }
 
 	/// <summary>
 	/// The number of decimal places used for internal operations such as casting from <see cref="double"/> to the
@@ -30,7 +30,7 @@ public sealed class MonetaryContext
 	public IReadOnlyList<ErrorRoundingOperation> ErrorRoundingOperations => InternalErrorRoundingOperations;
 
 	/// <summary>
-	/// Signals that some rounding errors have occurred during operations without residual handling.
+	/// Signals that some roundingMode errors have occurred during operations without residual handling.
 	/// </summary>
 	public bool HasRoundingErrors => InternalErrorRoundingOperations.Count > 0;
 
@@ -38,13 +38,16 @@ public sealed class MonetaryContext
 	/// Initializes a new <see cref="MonetaryContext"/> instance.
 	/// </summary>
 	/// <param name="defaultCurrency"></param>
-	/// <param name="rounding"></param>
+	/// <param name="roundingMode"></param>
 	/// <param name="operationDecimalPlaces"><inheritdoc cref="OperationDecimalPlaces"/></param>
-	public MonetaryContext(Currency defaultCurrency, MidpointRounding rounding, int operationDecimalPlaces = 8)
+	public MonetaryContext(
+		ICurrency? defaultCurrency = default, 
+		MidpointRounding roundingMode = default, 
+		int operationDecimalPlaces = 8)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(operationDecimalPlaces, 4);
-		DefaultCurrency = defaultCurrency;
-		Rounding = rounding;
+		DefaultCurrency = defaultCurrency ?? Currency.Undefined;
+		RoundingMode = roundingMode;
 		InternalErrorRoundingOperations = new();
 		OperationDecimalPlaces = operationDecimalPlaces;
 	}
@@ -80,11 +83,11 @@ public sealed class MonetaryContext
 	/// </summary>
 	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
 	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	/// <param name="residue">The residual amount after rounding.</param>
-	public Money NewMoney(decimal amount, Currency currency, out decimal residue)
+	/// <param name="residue">The residual amount after roundingMode.</param>
+	public Money NewMoney(decimal amount, ICurrency currency, out decimal residue)
 	{
-		var internalAmount = Math.Round(amount, OperationDecimalPlaces, Rounding);
-		var newAmount = Math.Round(internalAmount, currency.DecimalPlaces, Rounding);
+		var internalAmount = Math.Round(amount, OperationDecimalPlaces, RoundingMode);
+		var newAmount = Math.Round(internalAmount, currency.DecimalPlaces, RoundingMode);
 		residue = internalAmount - newAmount;
 		return new(amount, currency, this);
 	}
@@ -94,7 +97,7 @@ public sealed class MonetaryContext
 	/// </summary>
 	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
 	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	public Money NewMoney(decimal amount, Currency currency)
+	public Money NewMoney(decimal amount, ICurrency currency)
 	{
 		var result = NewMoney(amount, currency, out var residue);
 		var errorRoundingOperation = new ConvertFromDoubleOperation(residue, currency);
@@ -109,13 +112,13 @@ public sealed class MonetaryContext
 	/// </summary>
 	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
 	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	/// <param name="residue">The residual amount after rounding.</param>
+	/// <param name="residue">The residual amount after roundingMode.</param>
 	/// <returns></returns>
-	public Money NewMoney(double amount, Currency currency, out decimal residue)
+	public Money NewMoney(double amount, ICurrency currency, out decimal residue)
 	{
 		// ReSharper disable SuggestVarOrType_BuiltInTypes
-		decimal approximatedAmount = Math.Round((decimal)amount, OperationDecimalPlaces, Rounding);
-		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, Rounding);
+		decimal approximatedAmount = Math.Round((decimal)amount, OperationDecimalPlaces, RoundingMode);
+		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, RoundingMode);
 		residue = approximatedAmount - newAmount;
 		return new(newAmount, currency, this);
 	}
@@ -125,7 +128,7 @@ public sealed class MonetaryContext
 	/// </summary>
 	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
 	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	public Money NewMoney(double amount, Currency currency)
+	public Money NewMoney(double amount, ICurrency currency)
 	{
 		var result = NewMoney(amount, currency, out var residue);
 		var errorRoundingOperation = new ConvertFromDoubleOperation(residue, currency);

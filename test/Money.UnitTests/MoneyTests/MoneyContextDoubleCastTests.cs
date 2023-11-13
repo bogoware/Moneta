@@ -1,4 +1,4 @@
-namespace Bogoware.Money.UnitTests;
+namespace Bogoware.Money.UnitTests.MoneyTests;
 
 public class MoneyContextDoubleCastTests
 {

@@ -1,5 +1,8 @@
 namespace Bogoware.Money;
 
+/// <summary>
+/// Currency interface.
+/// </summary>
 public interface ICurrency
 {
 	/// <summary>
@@ -28,27 +31,29 @@ public interface ICurrency
 	bool IsNeutral { get; }
 }
 
-public abstract class Currency : ICurrency, IEquatable<Currency>
+public static class Currency
 {
 	/// <summary>
 	/// An <see cref="UndefinedCurrency"/> with 2 decimal places.
 	/// </summary>
-	public static Currency Undefined { get; } = new UndefinedCurrency(2);
+	public static ICurrency Undefined { get; } = new UndefinedCurrency(2);
+}
 
-
+/// <summary>
+/// An <see cref="ICurrency"/> implementation suitable to create new currencies.
+/// Equality is based on the <see cref="Code"/> property only.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T>
+{
+	
 	public string Code { get; }
-
-
 	public string Name { get; }
-
 	public string Symbol { get; }
-
 	public int DecimalPlaces { get; }
-
-
 	public bool IsNeutral { get; }
 
-	protected internal Currency(
+	internal Currency(
 		string code,
 		string name,
 		string symbol,
@@ -81,33 +86,27 @@ public abstract class Currency : ICurrency, IEquatable<Currency>
 	{
 	}
 
-	public bool Equals(Currency? other)
+	public bool Equals(T? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;
+		if (other.GetType() != GetType()) return false;
 		return Code == other.Code;
 	}
-
-	public override bool Equals(object? obj)
-	{
-		if (ReferenceEquals(null, obj)) return false;
-		if (ReferenceEquals(this, obj)) return true;
-		if (obj.GetType() != this.GetType()) return false;
-		return Equals((Currency)obj);
-	}
+	public override bool Equals(object? obj) => Equals(obj as T);
 
 	public override int GetHashCode() => Code.GetHashCode();
 
-	public static bool operator ==(Currency? left, Currency? right) => Equals(left, right);
+	public static bool operator ==(Currency<T> left, Currency<T> right) => Equals(left, right);
 
-	public static bool operator !=(Currency? left, Currency? right) => !Equals(left, right);
+	public static bool operator !=(Currency<T> left, Currency<T> right) => !Equals(left, right);
 }
 
 /// <summary>
 /// This currency is used to represent a monetary value that has no currency and can
 /// be used in any operation with any other currency.
 /// </summary>
-public sealed class UndefinedCurrency : Currency
+public sealed class UndefinedCurrency : Currency<UndefinedCurrency>
 {
 	/// <summary>
 	/// Instantiate a new <see cref="UndefinedCurrency"/> with the specified number of decimal places.
