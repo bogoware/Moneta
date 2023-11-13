@@ -1,6 +1,4 @@
-using Bogoware.Moneta;
-
-namespace Bogoware.Money.UnitTests.MonetaryContextTests;
+namespace Bogoware.Moneta.UnitTests.MonetaryContextTests;
 
 public class MonetaryContextMoneyFactoryTests
 {

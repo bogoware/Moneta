@@ -1,6 +1,4 @@
-using Bogoware.Moneta;
-
-namespace Bogoware.Money.UnitTests.MoneyTests;
+namespace Bogoware.Moneta.UnitTests.MoneyTests;
 
 public class MoneySafeAddTests
 {

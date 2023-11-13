@@ -7,8 +7,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <AssemblyName>Bogoware.Money.UnitTests</AssemblyName>
-        <RootNamespace>Bogoware.Money.UnitTests</RootNamespace>
+        <AssemblyName>Bogoware.Moneta.UnitTests</AssemblyName>
+        <RootNamespace>Bogoware.Moneta.UnitTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,6 +1,4 @@
-using Bogoware.Moneta;
-
-namespace Bogoware.Money.UnitTests.CurrencyTests;
+namespace Bogoware.Moneta.UnitTests.CurrencyTests;
 
 public class CurrencyEqualityTests
 {
