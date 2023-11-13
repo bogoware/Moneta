@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Bogoware.Money;
 
 /// <summary>
@@ -41,8 +43,8 @@ public sealed class MonetaryContext
 	/// <param name="roundingMode"></param>
 	/// <param name="operationDecimalPlaces"><inheritdoc cref="OperationDecimalPlaces"/></param>
 	public MonetaryContext(
-		ICurrency? defaultCurrency = default, 
-		MidpointRounding roundingMode = default, 
+		ICurrency? defaultCurrency = default,
+		MidpointRounding roundingMode = default,
 		int operationDecimalPlaces = 8)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(operationDecimalPlaces, 4);
@@ -52,94 +54,66 @@ public sealed class MonetaryContext
 		OperationDecimalPlaces = operationDecimalPlaces;
 	}
 
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the default currency.
-	/// </summary>
-	public Money NewMoney(decimal amount) => NewMoney(amount, DefaultCurrency);
-
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the default currency.
-	/// </summary>
-	public Money NewMoney(double amount) => NewMoney(amount, DefaultCurrency);
-
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the default currency.
-	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>.
-	/// </summary>
-	public Money NewMoney(decimal amount, out decimal residue) => NewMoney(amount, DefaultCurrency, out residue);
-
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the default currency.
-	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>.
-	/// </summary>
-	public Money NewMoney(double amount, out decimal residue) => NewMoney(amount, DefaultCurrency, out residue);
+	#region Money Factory Methods
 
 	/// <summary>
 	/// Initializes a new <see cref="Money"/> instance with the specified currency.
 	/// This operation assume that the caller will handle properly the residual part
 	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
-	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
-	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	/// <param name="residue">The residual amount after roundingMode.</param>
-	public Money NewMoney(decimal amount, ICurrency currency, out decimal residue)
-	{
-		var internalAmount = Math.Round(amount, OperationDecimalPlaces, RoundingMode);
-		var newAmount = Math.Round(internalAmount, currency.DecimalPlaces, RoundingMode);
-		residue = internalAmount - newAmount;
-		return new(amount, currency, this);
-	}
-
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the specified currency.
-	/// </summary>
-	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
-	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	public Money NewMoney(decimal amount, ICurrency currency)
-	{
-		var result = NewMoney(amount, currency, out var residue);
-		var errorRoundingOperation = new ConvertFromDoubleOperation(residue, currency);
-		AddErrorRoundingOperation(errorRoundingOperation);
-		return result;
-	}
-
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the specified currency.
-	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
-	/// </summary>
-	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
-	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	/// <param name="residue">The residual amount after roundingMode.</param>
 	/// <returns></returns>
-	public Money NewMoney(double amount, ICurrency currency, out decimal residue)
+	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode, out decimal residue)
+		where T : INumber<T>, IConvertible
 	{
 		// ReSharper disable SuggestVarOrType_BuiltInTypes
-		decimal approximatedAmount = Math.Round((decimal)amount, OperationDecimalPlaces, RoundingMode);
-		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, RoundingMode);
+		Money.ValidateType<T>();
+		decimal decimalAmount = Convert.ToDecimal(amount);
+		decimal approximatedAmount = Math.Round(decimalAmount, OperationDecimalPlaces, roundingMode);
+		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);
 		residue = approximatedAmount - newAmount;
 		return new(newAmount, currency, this);
 	}
 
+	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding,out decimal)"/>
+	public Money CreateMoney<T>(T amount, ICurrency currency, out decimal residue) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, currency, RoundingMode, out residue);
+
+	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding,out decimal)"/>
+	public Money CreateMoney<T>(T amount, out decimal residue) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, DefaultCurrency, out residue);
+
+
 	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the specified currency.
+	/// Initializes a new <see cref="Money"/> instance with the default currency.
+	/// In case of roundingMode errors, the residual part is added to the <see cref="MonetaryContext"/> as a
 	/// </summary>
-	/// <param name="amount">The amount of the <see cref="Money"/> instance.</param>
-	/// <param name="currency">The currency of the <see cref="Money"/> instance.</param>
-	public Money NewMoney(double amount, ICurrency currency)
+	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode)
+		where T : INumber<T>, IConvertible
 	{
-		var result = NewMoney(amount, currency, out var residue);
-		var errorRoundingOperation = new ConvertFromDoubleOperation(residue, currency);
+		var result = CreateMoney(amount, currency, roundingMode, out var residue);
+		var errorRoundingOperation = new CreateOperation(residue, currency);
 		AddErrorRoundingOperation(errorRoundingOperation);
 		return result;
 	}
+
+	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding)"/>
+	public Money CreateMoney<T>(T amount, ICurrency currency) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, currency, RoundingMode);
 	
+	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding)"/>
+	public Money CreateMoney<T>(T amount) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, DefaultCurrency, RoundingMode);
+
+	#endregion Money Factory Methods
+
+	/// <summary>
+	/// Returns true if the specified <see cref="Money"/> instance belongs to the <see cref="MonetaryContext"/>.
+	/// </summary>
+	public bool Owns(Money money) => money.Context == this;
+
 	internal void AddErrorRoundingOperation(ErrorRoundingOperation errorRoundingOperation)
 	{
 		if (errorRoundingOperation.Residue == 0) return;
 		InternalErrorRoundingOperations.Add(errorRoundingOperation);
 	}
-
 }

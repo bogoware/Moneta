@@ -473,7 +473,7 @@ public class Money : IEquatable<Money>
 	}
 
 	public static Money operator -(Money left, decimal right) => new(left.Amount - right, left.Currency, left.Context);
-	public static Money operator -(Money left, double right) => left - left.Context.NewMoney(right, left.Currency);
+	public static Money operator -(Money left, double right) => left - left.Context.CreateMoney(right, left.Currency);
 	public static Money operator *(Money left, decimal right) => new(left.Amount * right, left.Currency, left.Context);
 
 	public static Money operator *(decimal left, Money right) =>

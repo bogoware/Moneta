@@ -13,7 +13,7 @@ public class MoneyApplyTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
 		var result = sut.Apply(SafeMoneyTransformation, out var residue);
@@ -28,7 +28,7 @@ public class MoneyApplyTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
 		var result = sut.Apply(SafeDecimalTransformation, out var residue);
@@ -43,7 +43,7 @@ public class MoneyApplyTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(1M);
+		var sut = moneyContext.CreateMoney(1M);
 		
 		// Act
 		var result = sut.Apply(UnsafeMoneyTransformation, out var residue);
@@ -58,7 +58,7 @@ public class MoneyApplyTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(1M);
+		var sut = moneyContext.CreateMoney(1M);
 		
 		// Act
 		var result = sut.Apply(UnsafeDecimalTransformation, out var residue);

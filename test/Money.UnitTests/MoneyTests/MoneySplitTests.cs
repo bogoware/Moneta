@@ -13,14 +13,14 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, roundingMode);
-		var sut = moneyContext.NewMoney(amount);
+		var sut = moneyContext.CreateMoney(amount);
 
 		// Act
 		var parts = sut.Split(numberOfParts, out var residue);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
-		var expectedPart = moneyContext.NewMoney(expectedPartAmount, Currency.Undefined);
+		var expectedPart = moneyContext.CreateMoney(expectedPartAmount, Currency.Undefined);
 
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
@@ -33,7 +33,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
 		var parts = sut.Split(100, out var residue);
@@ -50,7 +50,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
-		var sut = moneyContext.NewMoney(10.01M);
+		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
 		var parts = sut.Split(100, out var residue);
@@ -67,7 +67,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
 		var parts = sut.Split(Enumerable.Repeat(1, 10), out var residue);
@@ -75,7 +75,7 @@ public class MoneySplitTests
 
 		// Assert
 		parts.Should().HaveCount(10);
-		parts.Should().AllBeEquivalentTo(moneyContext.NewMoney(1M));
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1M));
 		residue.Should().Be(0M);
 		(totalAmount + residue).Should().Be(10M);
 	}
@@ -86,7 +86,7 @@ public class MoneySplitTests
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
 		var weights = new[] { 2, 2, 1 };
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
 		var parts = sut.Split(weights, out var residue);
@@ -96,9 +96,9 @@ public class MoneySplitTests
 		parts.Should().HaveCount(3);
 		parts.Should().BeEquivalentTo(new[]
 		{
-			moneyContext.NewMoney(4M), 
-			moneyContext.NewMoney(4M), 
-			moneyContext.NewMoney(2M)
+			moneyContext.CreateMoney(4M), 
+			moneyContext.CreateMoney(4M), 
+			moneyContext.CreateMoney(2M)
 		});
 		residue.Should().Be(0M);
 		(totalAmount + residue).Should().Be(10M);
@@ -110,7 +110,7 @@ public class MoneySplitTests
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
 		var weights = new[] { 3, 2, 1 };
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
 		var parts = sut.Split(weights, out var residue);
@@ -120,9 +120,9 @@ public class MoneySplitTests
 		parts.Should().HaveCount(3);
 		parts.Should().BeEquivalentTo(new[]
 		{
-			moneyContext.NewMoney(5.00M), 
-			moneyContext.NewMoney(3.33M), 
-			moneyContext.NewMoney(1.67M)
+			moneyContext.CreateMoney(5.00M), 
+			moneyContext.CreateMoney(3.33M), 
+			moneyContext.CreateMoney(1.67M)
 		});
 		residue.Should().Be(0M);
 		(totalAmount + residue).Should().Be(10M);
@@ -133,7 +133,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
-		var sut = moneyContext.NewMoney(10.01M);
+		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
 		var parts = sut.Split(Enumerable.Repeat(1, 10), out var residue);
@@ -141,7 +141,7 @@ public class MoneySplitTests
 
 		// Assert
 		parts.Should().HaveCount(10);
-		parts.Should().AllBeEquivalentTo(moneyContext.NewMoney(1.00M));
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1.00M));
 		residue.Should().Be(0.01M);
 		(totalAmount + residue).Should().Be(10.01M);
 	}
@@ -152,7 +152,7 @@ public class MoneySplitTests
 		// Arrange
 		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
 		var weights = new[] { 177, 53, 13 };
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
 		var parts = sut.Split(weights, out var residue);
@@ -162,9 +162,9 @@ public class MoneySplitTests
 		parts.Should().HaveCount(3);
 		parts.Should().BeEquivalentTo(new[]
 		{
-			moneyContext.NewMoney(7.28M), // 177 / (177 + 53 + 13) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(2.18M), //  53 / (177 + 53 + 13) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(0.53M)  //  13 / (177 + 53 + 13) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(7.28M), // 177 / (177 + 53 + 13) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(2.18M), //  53 / (177 + 53 + 13) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(0.53M)  //  13 / (177 + 53 + 13) * 10 rounded to 2 decimal places
 		});
 		residue.Should().Be(0.01000000M);
 		(totalAmount + residue).Should().Be(10M);
@@ -175,7 +175,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
 		var weights = new[] { 1.0f, 1.0f };
@@ -184,7 +184,7 @@ public class MoneySplitTests
 		
 		// Assert
 		parts.Should().HaveCount(2);
-		parts.Should().AllBeEquivalentTo(moneyContext.NewMoney(5M));
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5M));
 		residue.Should().Be(0M);
 		(totalAmount + residue).Should().Be(10M);
 	}
@@ -194,7 +194,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
 		var weights = new[] { 1.25f, 1.50f, 1.75f };
@@ -205,9 +205,9 @@ public class MoneySplitTests
 		parts.Should().HaveCount(3);
 		parts.Should().BeEquivalentTo(new[]
 		{
-			moneyContext.NewMoney(2.78M), // 1.25 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(3.33M), // 1.50 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(3.89M)  // 1.75 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(2.78M), // 1.25 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(3.33M), // 1.50 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(3.89M)  // 1.75 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
 		});
 		residue.Should().Be(0M);
 		(totalAmount + residue).Should().Be(10M);
@@ -218,7 +218,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();
-		var sut = moneyContext.NewMoney(10.01M);
+		var sut = moneyContext.CreateMoney(10.01M);
 		
 		// Act
 		var weights = new[] { 1.0f, 1.0f };
@@ -227,7 +227,7 @@ public class MoneySplitTests
 		
 		// Assert
 		parts.Should().HaveCount(2);
-		parts.Should().AllBeEquivalentTo(moneyContext.NewMoney(5.00M));
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5.00M));
 		residue.Should().Be(0.01M);
 		(totalAmount + residue).Should().Be(10.01M);
 	}
@@ -237,7 +237,7 @@ public class MoneySplitTests
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext(roundingMode: MidpointRounding.ToZero);
-		var sut = moneyContext.NewMoney(10M);
+		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
 		var weights = new[] { 1f, 1.3333f, 1.6666f };
@@ -248,9 +248,9 @@ public class MoneySplitTests
 		parts.Should().HaveCount(3);
 		parts.Should().BeEquivalentTo(new[]
 		{
-			moneyContext.NewMoney(2.50M), // 1      / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(3.33M), // 1.3333 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
-			moneyContext.NewMoney(4.16M)  // 1.6666 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(2.50M), // 1      / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(3.33M), // 1.3333 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
+			moneyContext.CreateMoney(4.16M)  // 1.6666 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
 		});
 		residue.Should().Be(0.01M);
 		(totalAmount + residue).Should().Be(10M);
