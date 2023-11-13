@@ -1,5 +1,6 @@
 ﻿// ReSharper disable SuggestVarOrType_BuiltInTypes
 
+using System.Globalization;
 using System.Numerics;
 
 namespace Bogoware.Money;
@@ -341,6 +342,55 @@ public class Money : IEquatable<Money>
 
 	#endregion Multiply
 	
+	#region Apply & Map
+	
+	/// <summary>
+	/// Apply the specified functor to the money and return the result.
+	/// </summary>
+	/// <param name="functor">The function to apply</param>
+	/// <param name="residue">The residual part after conversion to money decimal</param>
+	public Money Apply<T>(Func<Money, T> functor, out decimal residue) where T: INumber<T>, IConvertible {
+		ValidateType<T>();
+		var rawNewAmount = functor(this);
+		var decimalNewAmount = Convert.ToDecimal(rawNewAmount);
+		var newAmount = Math.Round(decimalNewAmount, Currency.DecimalPlaces, Context.RoundingMode);
+		residue = decimalNewAmount - newAmount;
+		return new(newAmount, Currency, Context);
+	}
+	
+	/// <inheritdoc cref="Apply{T}(System.Func{Bogoware.Money.Money,T},out decimal)"/>
+	public Money Apply<T>(Func<decimal, T> functor, out decimal residue) where T: INumber<T>, IConvertible {
+		ValidateType<T>();
+		var rawNewAmount = functor(this.Amount);
+		var decimalNewAmount = Convert.ToDecimal(rawNewAmount);
+		var newAmount = Math.Round(decimalNewAmount, Currency.DecimalPlaces, Context.RoundingMode);
+		residue = decimalNewAmount - newAmount;
+		return new(newAmount, Currency, Context);
+	}
+	
+	/// <summary>
+	/// Map the specified functor to the money and return the result.
+	/// </summary>
+	/// <param name="functor"></param>
+	/// <typeparam name="T"></typeparam>
+	/// <returns></returns>
+	public Money Map<T>(Func<Money, T> functor) where T : INumber<T>, IConvertible
+	{
+		var result = Apply(functor, out var residue);
+		Context.AddErrorRoundingOperation(new MapOperation(residue, Currency));
+		return result;
+	}
+	
+	/// <inheritdoc cref="Map{T}(System.Func{Bogoware.Money.Money,T})"/>
+	public Money Map<T>(Func<decimal, T> functor) where T : INumber<T>, IConvertible
+	{
+		var result = Apply(functor, out var residue);
+		Context.AddErrorRoundingOperation(new MapOperation(residue, Currency));
+		return result;
+	}
+
+	#endregion Apply & Map
+	
 	#region Validation Helpers
 
 	internal static void ValidateType<T>() where T : INumber<T>, IConvertible
@@ -462,4 +512,9 @@ public class Money : IEquatable<Money>
 	public static bool operator !=(Money? left, Money? right) => !Equals(left, right);
 
 	#endregion Equality
+	
+	#region ToString
+	public override string ToString() => string.Format(CultureInfo.InvariantCulture, "{0} {1}", Currency, Amount);
+
+	#endregion ToString
 }

@@ -3,7 +3,7 @@ namespace Bogoware.Money.UnitTests.MoneyTests;
 public class MoneySafeAddTests
 {
 	[Fact]
-	public void Money_addDecimal_worksWithoutResidue()
+	public void Add_decimal_worksWithoutResidue()
 	{
 		// Arrange
 		var moneyContext = new MonetaryContext();

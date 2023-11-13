@@ -100,6 +100,8 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 	public static bool operator ==(Currency<T> left, Currency<T> right) => Equals(left, right);
 
 	public static bool operator !=(Currency<T> left, Currency<T> right) => !Equals(left, right);
+	
+	public override string ToString() => Code;
 }
 
 /// <summary>

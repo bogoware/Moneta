@@ -13,3 +13,5 @@ public sealed record DivideOperation(decimal Residue, ICurrency Currency) : Erro
 public sealed record MultiplyOperation(decimal Residue, ICurrency Currency) : ErrorRoundingOperation(Residue, Currency);
 public sealed record AddOperation(decimal Residue, ICurrency Currency) : ErrorRoundingOperation(Residue, Currency);
 public sealed record SubtractOperation(decimal Residue, ICurrency Currency) : ErrorRoundingOperation(Residue, Currency);
+
+public sealed record MapOperation(decimal Residue, ICurrency Currency) : ErrorRoundingOperation(Residue, Currency);
