@@ -1,6 +1,6 @@
-namespace Bogoware.Money.UnitTests.MoneyTests;
+namespace Bogoware.Money.UnitTests.MonetaryContextTests;
 
-public class MoneyContextDoubleCastTests
+public class MonetaryContextMoneyFactoryTests
 {
 	[Fact]
 	void MoneyContext_safeDoubleCast_work()
