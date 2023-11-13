@@ -65,6 +65,6 @@ public class MonetaryContextMoneyFactoryTests
 		sut.RoundingErrors.Should().HaveCount(1);
 		var errorRoundingOperation = sut.RoundingErrors[0];
 		errorRoundingOperation.Should().BeOfType<CreateOperation>();
-		errorRoundingOperation.As<CreateOperation>().Residue.Should().Be(0.003M);
+		errorRoundingOperation.As<CreateOperation>().Error.Should().Be(0.003M);
 	}
 }

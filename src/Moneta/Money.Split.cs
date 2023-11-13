@@ -7,7 +7,7 @@ public partial class Money
 	/// <summary>
 	/// Split the money into the specified number of parts.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="numberOfParts">The number of parts to split the money into.</param>
 	/// <param name="rounding">The rounding mode to use.</param>
@@ -28,7 +28,7 @@ public partial class Money
 	/// Split the money into the specified number of parts using the <see cref="Context"/>'s
 	/// rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="numberOfParts">The number of parts to split the money into.</param>
 	/// <param name="error">The residual part after the split. This value can be positive or negative.</param>
@@ -46,7 +46,7 @@ public partial class Money
 	{
 		var parts = Split(numberOfParts, rounding, out var residue);
 		var errorRoundingOperation = new SplitOperation(residue, Currency);
-		Context.AddErrorRoundingOperation(errorRoundingOperation);
+		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return parts;
 	}
 
@@ -54,7 +54,7 @@ public partial class Money
 	/// Split the money into the specified number of parts using the <see cref="Context"/>'s
 	/// rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="numberOfParts">The number of parts to split the money into.</param>
 	/// <returns>The list of parts.</returns>
@@ -63,7 +63,7 @@ public partial class Money
 	/// <summary>
 	/// Split the money into many parts using the specified weights.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="weights">The weights to use for the split. All weights must be positive.</param>
 	/// <param name="rounding">The rounding mode to use.</param>
@@ -103,7 +103,7 @@ public partial class Money
 	/// <summary>
 	/// Split the money into many parts using the specified weights and the <see cref="Context"/>'s rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="weights">The weights to use for the split. All weights must be positive.</param>
 	/// <param name="error">The residual part after the split. This value can be positive or negative.</param>
@@ -121,7 +121,7 @@ public partial class Money
 	{
 		var parts = Split(weights, rounding, out var residue);
 		var errorRoundingOperation = new SplitOperation(residue, Currency);
-		Context.AddErrorRoundingOperation(errorRoundingOperation);
+		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return parts;
 	}
 

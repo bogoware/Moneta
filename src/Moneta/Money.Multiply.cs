@@ -5,7 +5,7 @@ public partial class Money
 	/// <summary>
 	/// Multiply the money by the specified multiplier.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="multiplier">The multiplier.</param>
 	/// <param name="rounding">The rounding mode to use.</param> 
@@ -22,7 +22,7 @@ public partial class Money
 	/// <summary>
 	/// Multiply the money by the specified multiplier using the <see cref="Context"/>'s rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <param name="multiplier">The multiplier.</param>
 	/// <param name="error">The cumulative residual part after the division. This value can be positive or negative.</param>

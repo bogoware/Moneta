@@ -1,3 +1,6 @@
+using Bogoware.Moneta.Abstractions;
+using Bogoware.Moneta.CurrencyProviders;
+
 namespace Bogoware.Moneta.UnitTests.MonetaryContextTests;
 
 public class MonetaryContextCtorTests
@@ -10,7 +13,7 @@ public class MonetaryContextCtorTests
 		var sut = new MonetaryContext();
 		
 		// Assert
-		sut.DefaultCurrency.Should().Be(Currency.Undefined);
+		sut.DefaultCurrency.Should().Be(Currency.DefaultUndefined);
 		sut.RoundingMode.Should().Be(MidpointRounding.ToEven);
 		sut.RoundingErrorDecimals.Should().Be(8);
 		sut.HasRoundingErrors.Should().BeFalse();
@@ -30,10 +33,12 @@ public class MonetaryContextCtorTests
 	public void MonetaryContext_customCtor()
 	{
 		// Act
-		var sut = new MonetaryContext(FakeCurrency.Instance, MidpointRounding.AwayFromZero, 4);
+		var currencyProvider = new IsoCurrencyProvider();
+		var sut = new MonetaryContext(FakeCurrency.Instance, currencyProvider, MidpointRounding.AwayFromZero, 4);
 		
 		// Assert
 		sut.DefaultCurrency.Should().Be(FakeCurrency.Instance);
+		sut.CurrencyProvider.Should().Be(currencyProvider);
 		sut.RoundingMode.Should().Be(MidpointRounding.AwayFromZero);
 		sut.RoundingErrorDecimals.Should().Be(4);
 		sut.HasRoundingErrors.Should().BeFalse();

@@ -1,4 +1,5 @@
 using System.Numerics;
+using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta;
 
@@ -25,12 +26,12 @@ public partial class Money
 		}
 	}
 
-	private static void ValidateOperands(Money left, Money right)
+	private static void ValidateOperands(Money lhs, Money rhs)
 	{
-		if (left.Currency.IsNeutral
-		    || right.Currency.IsNeutral
-		    || left.Currency == right.Currency) return;
+		if (lhs.Currency.IsNeutral
+		    || rhs.Currency.IsNeutral
+		    || lhs.Currency == rhs.Currency) return;
 
-		throw new InvalidOperationException("Cannot operate on money with different currencies.");
+		throw new CurrencyIncompatibleException(lhs, rhs);
 	}
 }

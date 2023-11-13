@@ -1,42 +1,24 @@
+using Bogoware.Moneta.Abstractions;
+
 namespace Bogoware.Moneta;
 
 /// <summary>
-/// Currency interface.
+/// A currency
 /// </summary>
-public interface ICurrency
-{
-	/// <summary>
-	/// Should be the ISO 4217 currency code.
-	/// </summary>
-	string Code { get; }
-
-	/// <summary>
-	/// The international name of the currency.
-	/// </summary>
-	string Name { get; }
-
-	/// <summary>
-	/// The international symbol of the currency.
-	/// </summary>
-	string Symbol { get; }
-
-	/// <summary>
-	/// The number of decimal places used by the currency.
-	/// </summary>
-	int DecimalPlaces { get; }
-
-	/// <summary>
-	/// A neutral currency is a currency that can be used in any operation with any other currency.
-	/// </summary>
-	bool IsNeutral { get; }
-}
-
-public static class Currency
+public class Currency: Currency<Currency>
 {
 	/// <summary>
 	/// An <see cref="UndefinedCurrency"/> with 2 decimal places.
 	/// </summary>
-	public static ICurrency Undefined { get; } = new UndefinedCurrency(2);
+	public static ICurrency DefaultUndefined { get; } = new UndefinedCurrency(2);
+
+	/// <summary>
+	/// Initializes a new <see cref="Currency"/> instance.
+	/// </summary>
+	public Currency(string code, string name, string symbol, int decimalPlaces)
+		: base(code, name, symbol, decimalPlaces)
+	{
+	}
 }
 
 /// <summary>
@@ -60,7 +42,7 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 		int decimalPlaces,
 		bool isNeutral)
 	{
-		ArgumentOutOfRangeException.ThrowIfNegativeOrZero(decimalPlaces);
+		ArgumentOutOfRangeException.ThrowIfNegative(decimalPlaces);
 		ArgumentOutOfRangeException.ThrowIfGreaterThan(decimalPlaces, 28);
 
 		Code = code;

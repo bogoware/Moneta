@@ -1,4 +1,7 @@
 using System.Numerics;
+using Bogoware.Moneta.Abstractions;
+using Bogoware.Moneta.CurrencyProviders;
+using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta;
 
@@ -12,10 +15,16 @@ public sealed class MonetaryContext
 	/// <seealso cref="RoundingErrorDecimals"/>
 	/// </summary>
 	public const int DefaultRoundingErrorDecimals = 8;
+
 	/// <summary>
 	/// The default <see cref="Currency"/> for monetary operations
 	/// </summary>
 	public ICurrency DefaultCurrency { get; }
+
+	/// <summary>
+	/// The <see cref="ICurrencyProvider"/> used to retrieve currencies.
+	/// </summary>
+	public ICurrencyProvider CurrencyProvider { get; }
 
 	/// <summary>
 	/// The default roundingMode mode for monetary operations and internal
@@ -32,12 +41,12 @@ public sealed class MonetaryContext
 	/// </summary>
 	public int RoundingErrorDecimals { get; }
 
-	private List<ErrorRoundingOperation> InternalRoundingErrors { get; }
+	private List<RoundingErrorOperation> InternalRoundingErrors { get; }
 
 	/// <summary>
 	/// The rounding errors occurred during operations performed without rounding error handling.
 	/// </summary>
-	public IReadOnlyList<ErrorRoundingOperation> RoundingErrors => InternalRoundingErrors;
+	public IReadOnlyList<RoundingErrorOperation> RoundingErrors => InternalRoundingErrors;
 
 	/// <summary>
 	/// The context has rounding errors.
@@ -49,24 +58,23 @@ public sealed class MonetaryContext
 	/// </summary>
 	public MonetaryContext(
 		ICurrency? defaultCurrency = default,
+		ICurrencyProvider? currencyProvider = default,
 		MidpointRounding roundingMode = default,
 		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roundingErrorDecimals, 4);
-		DefaultCurrency = defaultCurrency ?? Currency.Undefined;
+		DefaultCurrency = defaultCurrency ?? Currency.DefaultUndefined;
+		CurrencyProvider = currencyProvider ?? new NullCurrencyProvider();
 		RoundingMode = roundingMode;
 		InternalRoundingErrors = new();
 		RoundingErrorDecimals = roundingErrorDecimals;
 	}
 
-	#region Money Factory Methods
+	#region Money Factory Methods (Safe ones)
 
 	/// <summary>
 	/// Initializes a new <see cref="Money"/> instance with the specified currency.
-	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
-	/// <returns></returns>
 	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode, out decimal error)
 		where T : INumber<T>, IConvertible
 	{
@@ -79,46 +87,80 @@ public sealed class MonetaryContext
 		return new(newAmount, currency, this);
 	}
 
-	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Moneta.ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <exception cref="CurrencyNotFoundException">Thrown when the currency is not found.</exception>
+	public Money CreateMoney<T>(T amount, string currency, MidpointRounding roundingMode, out decimal error)
+		where T : INumber<T>, IConvertible
+	{
+		var currencyInstance = CurrencyProvider.GetCurrency(currency);
+		return CreateMoney(amount, currencyInstance, roundingMode, out error);
+	}
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
 	public Money CreateMoney<T>(T amount, ICurrency currency, out decimal error) where T : INumber<T>, IConvertible =>
 		CreateMoney(amount, currency, RoundingMode, out error);
 
-	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Moneta.ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <exception cref="CurrencyNotFoundException">Thrown when the currency is not found.</exception>
+	public Money CreateMoney<T>(T amount, string currency, out decimal error) where T : INumber<T>, IConvertible
+	{
+		var currencyInstance = CurrencyProvider.GetCurrency(currency);
+		return CreateMoney(amount, currencyInstance, RoundingMode, out error);
+	}
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
 	public Money CreateMoney<T>(T amount, out decimal error) where T : INumber<T>, IConvertible =>
-		CreateMoney(amount, DefaultCurrency, out error);
+		CreateMoney(amount, DefaultCurrency, RoundingMode, out error);
 
+	#endregion Money Factory Methods (Safe ones)
 
-	/// <summary>
-	/// Initializes a new <see cref="Money"/> instance with the default currency.
-	/// In case of roundingMode errors, the residual part is added to the <see cref="MonetaryContext"/> as a
-	/// </summary>
+	#region Money Factory Methods (Unsafe ones)
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
 	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode)
 		where T : INumber<T>, IConvertible
 	{
 		var result = CreateMoney(amount, currency, roundingMode, out var error);
 		var errorRoundingOperation = new CreateOperation(error, currency);
-		AddErrorRoundingOperation(errorRoundingOperation);
+		AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}
 
-	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Moneta.ICurrency,System.MidpointRounding)"/>
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <exception cref="CurrencyNotFoundException">Thrown when the currency is not found.</exception>
+	public Money CreateMoney<T>(T amount, string currency, MidpointRounding roundingMode)
+		where T : INumber<T>, IConvertible
+	{
+		var currencyInstance = CurrencyProvider.GetCurrency(currency);
+		return CreateMoney(amount, currencyInstance, roundingMode);
+	}
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding)"/>
 	public Money CreateMoney<T>(T amount, ICurrency currency) where T : INumber<T>, IConvertible =>
 		CreateMoney(amount, currency, RoundingMode);
-	
-	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Moneta.ICurrency,System.MidpointRounding)"/>
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding,out decimal)"/>
+	/// <exception cref="CurrencyNotFoundException">Thrown when the currency is not found.</exception>
+	public Money CreateMoney<T>(T amount, string currency) where T : INumber<T>, IConvertible
+	{
+		var currencyInstance = CurrencyProvider.GetCurrency(currency);
+		return CreateMoney(amount, currencyInstance, RoundingMode);
+	}
+
+	/// <inheritdoc cref="CreateMoney{T}(T,ICurrency,System.MidpointRounding)"/>
 	public Money CreateMoney<T>(T amount) where T : INumber<T>, IConvertible =>
 		CreateMoney(amount, DefaultCurrency, RoundingMode);
 
-	#endregion Money Factory Methods
+	#endregion Money Factory Methods (Unsafe ones)
 
 	/// <summary>
 	/// Returns true if the specified <see cref="Money"/> instance belongs to the <see cref="MonetaryContext"/>.
 	/// </summary>
 	public bool Owns(Money money) => money.Context == this;
 
-	internal void AddErrorRoundingOperation(ErrorRoundingOperation errorRoundingOperation)
+	internal void AddRoundingErrorOperation(RoundingErrorOperation roundingErrorOperation)
 	{
-		if (errorRoundingOperation.Residue == 0) return;
-		InternalRoundingErrors.Add(errorRoundingOperation);
+		if (roundingErrorOperation.Error == 0) return;
+		InternalRoundingErrors.Add(roundingErrorOperation);
 	}
 }

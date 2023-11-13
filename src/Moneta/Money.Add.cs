@@ -9,7 +9,7 @@ public partial class Money
 	/// <summary>
 	/// Add the specified amount to the money.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	public Money Add<T>(T amount, MidpointRounding rounding, out decimal error) where T : INumber<T>, IConvertible
 	{
@@ -35,7 +35,7 @@ public partial class Money
 	{
 		var result = Add(amount, rounding, out var residue);
 		var errorRoundingOperation = new AddOperation(residue, Currency);
-		Context.AddErrorRoundingOperation(errorRoundingOperation);
+		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}
 
@@ -45,7 +45,7 @@ public partial class Money
 	{
 		var result = Add(amount, Context.RoundingMode, out var residue);
 		var errorRoundingOperation = new AddOperation(residue, Currency);
-		Context.AddErrorRoundingOperation(errorRoundingOperation);
+		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}
 

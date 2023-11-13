@@ -13,7 +13,7 @@ public partial class Money
 	public Money Map<T>(Func<Money, T> functor) where T : INumber<T>, IConvertible
 	{
 		var result = Apply(functor, out var error);
-		Context.AddErrorRoundingOperation(new MapOperation(error, Currency));
+		Context.AddRoundingErrorOperation(new MapOperation(error, Currency));
 		return result;
 	}
 
@@ -21,7 +21,7 @@ public partial class Money
 	public Money Map<T>(Func<decimal, T> functor) where T : INumber<T>, IConvertible
 	{
 		var result = Apply(functor, out var error);
-		Context.AddErrorRoundingOperation(new MapOperation(error, Currency));
+		Context.AddRoundingErrorOperation(new MapOperation(error, Currency));
 		return result;
 	}
 }

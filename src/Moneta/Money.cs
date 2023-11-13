@@ -4,6 +4,8 @@
 
 // ReSharper disable MemberCanBePrivate.Global
 
+using Bogoware.Moneta.Abstractions;
+
 namespace Bogoware.Moneta;
 
 /// <summary>

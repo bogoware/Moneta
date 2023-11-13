@@ -12,7 +12,7 @@ public class MoneySplitTests
 		decimal expectedResidueAmount)
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, roundingMode);
+		var moneyContext = new MonetaryContext(roundingMode: roundingMode);
 		var sut = moneyContext.CreateMoney(amount);
 
 		// Act
@@ -20,7 +20,7 @@ public class MoneySplitTests
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
-		var expectedPart = moneyContext.CreateMoney(expectedPartAmount, Currency.Undefined);
+		var expectedPart = moneyContext.CreateMoney(expectedPartAmount, Currency.DefaultUndefined);
 
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
@@ -32,7 +32,7 @@ public class MoneySplitTests
 	public void Money_splitByNumberOfParts_worksWithPerfectSplit()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
@@ -49,7 +49,7 @@ public class MoneySplitTests
 	public void Money_splitByNumberOfParts_worksWithResidue()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
@@ -66,7 +66,7 @@ public class MoneySplitTests
 	public void Money_splitByIntWeights_worksWithPerfectSplit_01()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
@@ -84,7 +84,7 @@ public class MoneySplitTests
 	public void Money_splitByIntWeights_worksWithPerfectSplit_02()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var weights = new[] { 2, 2, 1 };
 		var sut = moneyContext.CreateMoney(10M);
 
@@ -108,7 +108,7 @@ public class MoneySplitTests
 	public void Money_splitByIntWeights_worksWithPerfectSplit_03()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var weights = new[] { 3, 2, 1 };
 		var sut = moneyContext.CreateMoney(10M);
 
@@ -132,7 +132,7 @@ public class MoneySplitTests
 	public void Money_splitByIntWeights_worksWithResidue_01()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
@@ -150,7 +150,7 @@ public class MoneySplitTests
 	public void Money_splitByIntWeights_worksWithResidue_02()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(Currency.Undefined, MidpointRounding.ToEven);
+		var moneyContext = new MonetaryContext();
 		var weights = new[] { 177, 53, 13 };
 		var sut = moneyContext.CreateMoney(10M);
 
