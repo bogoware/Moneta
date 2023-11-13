@@ -12,9 +12,9 @@ public class MonetaryContextCtorTests
 		// Assert
 		sut.DefaultCurrency.Should().Be(Currency.Undefined);
 		sut.RoundingMode.Should().Be(MidpointRounding.ToEven);
-		sut.OperationDecimalPlaces.Should().Be(8);
+		sut.RoundingErrorDecimals.Should().Be(8);
 		sut.HasRoundingErrors.Should().BeFalse();
-		sut.ErrorRoundingOperations.Should().BeEmpty();
+		sut.RoundingErrors.Should().BeEmpty();
 	}
 
 	private class FakeCurrency : Currency<FakeCurrency>
@@ -35,8 +35,8 @@ public class MonetaryContextCtorTests
 		// Assert
 		sut.DefaultCurrency.Should().Be(FakeCurrency.Instance);
 		sut.RoundingMode.Should().Be(MidpointRounding.AwayFromZero);
-		sut.OperationDecimalPlaces.Should().Be(4);
+		sut.RoundingErrorDecimals.Should().Be(4);
 		sut.HasRoundingErrors.Should().BeFalse();
-		sut.ErrorRoundingOperations.Should().BeEmpty();
+		sut.RoundingErrors.Should().BeEmpty();
 	}
 }

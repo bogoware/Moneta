@@ -8,50 +8,55 @@ namespace Bogoware.Money;
 public sealed class MonetaryContext
 {
 	/// <summary>
+	/// The default number of decimals used for rounding errors detection.
+	/// <seealso cref="RoundingErrorDecimals"/>
+	/// </summary>
+	public const int DefaultRoundingErrorDecimals = 8;
+	/// <summary>
 	/// The default <see cref="Currency"/> for monetary operations
 	/// </summary>
 	public ICurrency DefaultCurrency { get; }
 
 	/// <summary>
-	/// The default roundingMode mode for monetary operations
-	/// belonging to the context.
+	/// The default roundingMode mode for monetary operations and internal
+	/// error rounding detection.
 	/// </summary>
 	public MidpointRounding RoundingMode { get; }
 
 	/// <summary>
-	/// The number of decimal places used for internal operations such as casting from <see cref="double"/> to the
-	/// <see cref="Money.Amount"/> of the <see cref="Money"/> type or multiplication and division operations.
+	/// The number of decimal places used for error rounding detection, default is <see cref="DefaultRoundingErrorDecimals"/>.
+	/// Floating point types are converted to <see cref="decimal"/> with the specified number of decimals
+	/// and then used for monetary operations.
+	/// If this parameter is less then or equal to currency's <see cref="ICurrency.DecimalPlaces"/>, then
+	/// no rounding errors can be detected.
 	/// </summary>
-	public int OperationDecimalPlaces { get; }
+	public int RoundingErrorDecimals { get; }
 
-	private List<ErrorRoundingOperation> InternalErrorRoundingOperations { get; }
-
-	/// <summary>
-	/// A list of residual amounts that have not been handled by the user.
-	/// </summary>
-	public IReadOnlyList<ErrorRoundingOperation> ErrorRoundingOperations => InternalErrorRoundingOperations;
+	private List<ErrorRoundingOperation> InternalRoundingErrors { get; }
 
 	/// <summary>
-	/// Signals that some roundingMode errors have occurred during operations without residual handling.
+	/// The rounding errors occurred during operations performed without rounding error handling.
 	/// </summary>
-	public bool HasRoundingErrors => InternalErrorRoundingOperations.Count > 0;
+	public IReadOnlyList<ErrorRoundingOperation> RoundingErrors => InternalRoundingErrors;
+
+	/// <summary>
+	/// The context has rounding errors.
+	/// </summary>
+	public bool HasRoundingErrors => InternalRoundingErrors.Count > 0;
 
 	/// <summary>
 	/// Initializes a new <see cref="MonetaryContext"/> instance.
 	/// </summary>
-	/// <param name="defaultCurrency"></param>
-	/// <param name="roundingMode"></param>
-	/// <param name="operationDecimalPlaces"><inheritdoc cref="OperationDecimalPlaces"/></param>
 	public MonetaryContext(
 		ICurrency? defaultCurrency = default,
 		MidpointRounding roundingMode = default,
-		int operationDecimalPlaces = 8)
+		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
 	{
-		ArgumentOutOfRangeException.ThrowIfLessThan(operationDecimalPlaces, 4);
+		ArgumentOutOfRangeException.ThrowIfLessThan(roundingErrorDecimals, 4);
 		DefaultCurrency = defaultCurrency ?? Currency.Undefined;
 		RoundingMode = roundingMode;
-		InternalErrorRoundingOperations = new();
-		OperationDecimalPlaces = operationDecimalPlaces;
+		InternalRoundingErrors = new();
+		RoundingErrorDecimals = roundingErrorDecimals;
 	}
 
 	#region Money Factory Methods
@@ -62,25 +67,25 @@ public sealed class MonetaryContext
 	/// and therefore does not add a <see cref="ErrorRoundingOperation"/> to the <see cref="MonetaryContext"/>. 
 	/// </summary>
 	/// <returns></returns>
-	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode, out decimal residue)
+	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode, out decimal error)
 		where T : INumber<T>, IConvertible
 	{
 		// ReSharper disable SuggestVarOrType_BuiltInTypes
 		Money.ValidateType<T>();
 		decimal decimalAmount = Convert.ToDecimal(amount);
-		decimal approximatedAmount = Math.Round(decimalAmount, OperationDecimalPlaces, roundingMode);
+		decimal approximatedAmount = Math.Round(decimalAmount, RoundingErrorDecimals, roundingMode);
 		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);
-		residue = approximatedAmount - newAmount;
+		error = approximatedAmount - newAmount;
 		return new(newAmount, currency, this);
 	}
 
 	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding,out decimal)"/>
-	public Money CreateMoney<T>(T amount, ICurrency currency, out decimal residue) where T : INumber<T>, IConvertible =>
-		CreateMoney(amount, currency, RoundingMode, out residue);
+	public Money CreateMoney<T>(T amount, ICurrency currency, out decimal error) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, currency, RoundingMode, out error);
 
 	/// <inheritdoc cref="CreateMoney{T}(T,Bogoware.Money.ICurrency,System.MidpointRounding,out decimal)"/>
-	public Money CreateMoney<T>(T amount, out decimal residue) where T : INumber<T>, IConvertible =>
-		CreateMoney(amount, DefaultCurrency, out residue);
+	public Money CreateMoney<T>(T amount, out decimal error) where T : INumber<T>, IConvertible =>
+		CreateMoney(amount, DefaultCurrency, out error);
 
 
 	/// <summary>
@@ -90,8 +95,8 @@ public sealed class MonetaryContext
 	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode)
 		where T : INumber<T>, IConvertible
 	{
-		var result = CreateMoney(amount, currency, roundingMode, out var residue);
-		var errorRoundingOperation = new CreateOperation(residue, currency);
+		var result = CreateMoney(amount, currency, roundingMode, out var error);
+		var errorRoundingOperation = new CreateOperation(error, currency);
 		AddErrorRoundingOperation(errorRoundingOperation);
 		return result;
 	}
@@ -114,6 +119,6 @@ public sealed class MonetaryContext
 	internal void AddErrorRoundingOperation(ErrorRoundingOperation errorRoundingOperation)
 	{
 		if (errorRoundingOperation.Residue == 0) return;
-		InternalErrorRoundingOperations.Add(errorRoundingOperation);
+		InternalRoundingErrors.Add(errorRoundingOperation);
 	}
 }
