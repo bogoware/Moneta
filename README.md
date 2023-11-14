@@ -6,14 +6,27 @@ Moneta is a library designed to support monetary calculations in a secure manner
 
 * [Monetary Context](#monetary-context)
 * [Money](#money)
+* [Supported Operations](#supported-operations)
+  * [Split](#split)
+  * [Apply](#apply)
+  * [Map](#map): suitable for functional style programming
+  * [Bind](#bind): suitable for functional style programming
+  * [Add](#add)
+  * [Subtract](#subtract)
+  * [Multiply](#multiply)
+  * [Divide](#divide)
+  * [Negate](#negate)
+  * [CompareTo](#compareto)
+  * [Binary Operators (+, -, *, /, <, <=, …)](#operators)
 * [Currency](#currency)
 * [Rounding Error Detection](#rounding-error-detection)
 * [Safe and Unsafe Operations](#safe-and-unsafe-operations)
 * [Currency System](#currency-system)
 * [Currency Providers](#currency-providers)
-* [Exchange Rate Conversion](#exchange-rate-conversion)
-* [Exchange Rate Providers](#exchange-rate-providers)
-* [Samples](#samples)
+* [Exchange Rate Conversion](#exchange-rate-conversion) TODO
+* [Exchange Rate Providers](#exchange-rate-providers) TODO
+* [Samples](#samples) TODO
+* [Dependency Injection](#dependency-injection) TODO
 
 ## Concepts and Key Features
 
