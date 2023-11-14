@@ -30,11 +30,11 @@ Moneta is a library designed to support monetary calculations in a secure manner
 
 ## Concepts and Key Features
 
-### Monetary Context
+### Moneta Context
 
-A `MonetaryContext` sets the boundaries for safe and coherent monetary operations, ensuring that no rounding errors go unnoticed.
+A `MonetaContext` sets the boundaries for safe and coherent monetary operations, ensuring that no rounding errors go unnoticed.
 
-A `MonetaryContext` defines the following:
+A `MonetaContext` defines the following:
 * The default `ICurrency` for creating new `Money` instances. For example, if you exclusively deal with EUR, you can set EUR as the default currency, making the creation of new `Money` instances more straightforward.
 * The `ICurrencyProvider` used to resolve currencies by code, enabling you to resolve currencies from a database or a web service.
 * The default `RoundingMode` for monetary operations.
@@ -51,7 +51,7 @@ The supported operations are:
 * `Map`: will apply a function to the `Money` value and return a new `Money` instance with the same `Currency`.
 * `Add`, `Subtract`, `Multiply`, `Divide`: will perform the corresponding operation between two `Money` instances or a `Money` instance and a number, returning a new `Money` instance with the same `Currency`.
 * `Negate`: will negate the `Money` value and return a new `Money` instance with the same `Currency`.
-* `CompareTo`: will compare the `Money` value with another `Money` instance or a number. If the `Money` instances have different `Currencies`, and the `MonetaryContext` has an `IExchangeRateProvider`, the `Money` instances will be converted to the same `Currency` before the comparison, otherwise an exception will be thrown.
+* `CompareTo`: will compare the `Money` value with another `Money` instance or a number. If the `Money` instances have different `Currencies`, and the `MonetaContext` has an `IExchangeRateProvider`, the `Money` instances will be converted to the same `Currency` before the comparison, otherwise an exception will be thrown.
 
 And of course you can also use basic operators such as `+`, `-`, `*`, `/`, `==`, `!=`, `>`, `>=`, `<`, `<=`. All the binary operators between a `Money` instance and a number are unsafe operations (see [Safe and Unsafe Operations](#safe-and-unsafe-operations)).
 
@@ -67,7 +67,7 @@ An important characteristic of a currency is the number of decimal places it sup
 
 Moneta aims to facilitate secure monetary calculations through a fluent algebraic API. The design goal is to provide an API that allows you to conduct monetary operations within a secure context, detecting and reporting any potential rounding errors. This way, you can manage them according to your domain requirements.
 
-A *rounding error* occurs when an operation cannot be performed without losing precision. These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and the `MonetaryContext.RoundingErrorDecimals`.
+A *rounding error* occurs when an operation cannot be performed without losing precision. These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and the `MonetaContext.RoundingErrorDecimals`.
 
 There are two main causes of rounding errors:
 * Split Operations
@@ -124,7 +124,65 @@ TBD (To Be Determined)
 
 ## Samples
 
-### Creating a Monetary Context
+These samples are available in the [Moneta.Samples](./samples/MonetaHelloWorld) project.
+
+### Sample 1: no rounding errors occurred
+
+```csharp
+using Bogoware.Moneta;
+using Bogoware.Moneta.CurrencyProviders;
+
+using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+{
+	var money = context.CreateMoney(1.00M);
+
+	money += 11;
+	money /= 2;
+	
+	Console.WriteLine($"The final amount is {money}");
+} // OK!
+```
+### Sample 2: handled rounding errors
+
+```csharp
+using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+{
+	var money = context.CreateMoney(1.00M);
+
+	money += 11;
+	money /= 2;
+	money += 1.2321; // Unhandled Rounding error
+	
+	if (context.HasRoundingErrors)
+	{
+		Console.WriteLine(" > Rounding errors detected");
+		foreach (var error in context.RoundingErrors)
+		{
+			// TODO: Handle rounding errors
+			Console.WriteLine($"   Error: {error}");
+		}
+		context.ClearRoundingErrors();
+	}
+	
+	Console.WriteLine($"The final amount is {money}");
+} // OK!
+```
+### Sample 3: unhanded rounding errors
+
+```csharp
+using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+{
+	var money = context.CreateMoney(1.00M);
+
+	money += 11;
+	money /= 2;
+	money += 1.2321; // Unhandled Rounding error
+	
+	Console.WriteLine($"The final amount is {money}");
+} // KO! Exception thrown
+```
+
+### Creating a Moneta Context
 
 ```csharp
 

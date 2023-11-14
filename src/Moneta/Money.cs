@@ -24,9 +24,9 @@ public partial class Money : IEquatable<Money>
 	public ICurrency Currency { get; }
 
 	/// <summary>
-	/// The <see cref="MonetaryContext"/> of the money.
+	/// The <see cref="MonetaContext"/> of the money.
 	/// </summary>
-	public MonetaryContext Context { get; }
+	public MonetaContext Context { get; }
 
 	/// <summary>
 	/// Initializes a new <see cref="Money"/> instance.
@@ -34,7 +34,7 @@ public partial class Money : IEquatable<Money>
 	/// <param name="amount"></param>
 	/// <param name="currency"></param>
 	/// <param name="context"></param>
-	internal Money(decimal amount, ICurrency currency, MonetaryContext context)
+	internal Money(decimal amount, ICurrency currency, MonetaContext context)
 	{
 		Amount = amount;
 		Currency = currency;

@@ -6,7 +6,7 @@ public class MoneyToStringTests: MoneyBaseTests
 	public void Money_EuroToString_works()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(defaultCurrency: Euro);
+		var moneyContext = new MonetaContext(defaultCurrency: Euro);
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
@@ -20,7 +20,7 @@ public class MoneyToStringTests: MoneyBaseTests
 	public void Money_UndefinedToString_works()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext(defaultCurrency: UndefinedCurrencyWith4Digits);
+		var moneyContext = new MonetaContext(defaultCurrency: UndefinedCurrencyWith4Digits);
 		var sut = moneyContext.CreateMoney(10.1M);
 
 		// Act

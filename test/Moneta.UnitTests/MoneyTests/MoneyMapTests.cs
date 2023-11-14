@@ -6,7 +6,7 @@ public class MoneyMapTests
 	public void Map_withMoney_worksWithoutResidue()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext();
+		var moneyContext = new MonetaContext();
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
@@ -21,7 +21,7 @@ public class MoneyMapTests
 	public void Map_withDecimal_worksWithoutResidue()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext();
+		var moneyContext = new MonetaContext();
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
@@ -36,7 +36,7 @@ public class MoneyMapTests
 	public void Map_withMoney_worksWithResidue()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext();
+		var moneyContext = new MonetaContext();
 		var sut = moneyContext.CreateMoney(1M);
 
 		// Act
@@ -51,7 +51,7 @@ public class MoneyMapTests
 	public void Map_withDecimal_worksWithResidue()
 	{
 		// Arrange
-		var moneyContext = new MonetaryContext();
+		var moneyContext = new MonetaContext();
 		var sut = moneyContext.CreateMoney(1M);
 
 		// Act

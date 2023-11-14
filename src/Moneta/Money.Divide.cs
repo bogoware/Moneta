@@ -5,7 +5,7 @@ public partial class Money
 	/// <summary>
 	/// Divide the money into the specified number of parts.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>.
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaContext"/>.
 	/// </summary>
 	/// <param name="divisor">The divisor.</param>
 	/// <param name="rounding">The rounding mode to use.</param>
@@ -23,7 +23,7 @@ public partial class Money
 	/// <summary>
 	/// Divide the money into the specified number of parts using the <see cref="Context"/>'s rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaContext"/>. 
 	/// </summary>
 	/// <param name="divisor">The divisor.</param>
 	/// <param name="error">The cumulative residual part after the division. This value can be positive or negative.</param>

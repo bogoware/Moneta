@@ -11,7 +11,7 @@ public class MonetaryContextCtorTests
 	public void MonetaryContext_voidCtor()
 	{
 		// Act
-		var sut = new MonetaryContext();
+		var sut = new MonetaContext();
 		
 		// Assert
 		sut.DefaultCurrency.Should().Be(new UndefinedCurrency());
@@ -35,7 +35,7 @@ public class MonetaryContextCtorTests
 	{
 		// Act
 		var currencyProvider = new IsoCurrencyProvider();
-		var sut = new MonetaryContext(FakeCurrency.Instance, currencyProvider, MidpointRounding.AwayFromZero, 4);
+		var sut = new MonetaContext(FakeCurrency.Instance, currencyProvider, MidpointRounding.AwayFromZero, 4);
 		
 		// Assert
 		sut.DefaultCurrency.Should().Be(FakeCurrency.Instance);
@@ -51,7 +51,7 @@ public class MonetaryContextCtorTests
 	{
 		// Arrange
 		var currency = new Currency("CUR", "Currency", "C", 10);
-		var sut = new MonetaryContext(roundingErrorDecimals: 4);
+		var sut = new MonetaContext(roundingErrorDecimals: 4);
 		
 		// Act
 		sut

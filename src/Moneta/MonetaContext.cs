@@ -8,7 +8,7 @@ namespace Bogoware.Moneta;
 /// <summary>
 /// A monetary context. 
 /// </summary>
-public sealed class MonetaryContext
+public sealed class MonetaContext: IDisposable
 {
 	/// <summary>
 	/// The default number of decimals used for rounding errors detection.
@@ -54,13 +54,13 @@ public sealed class MonetaryContext
 	public bool HasRoundingErrors => InternalRoundingErrors.Count > 0;
 
 	/// <summary>
-	/// Initializes a new <see cref="MonetaryContext"/> instance.
+	/// Initializes a new <see cref="MonetaContext"/> instance.
 	/// </summary>
 	/// <param name="defaultCurrency">The currency used to create new money. Default: <see cref="DefaultCurrency"/>.</param>
 	/// <param name="currencyProvider">The currency provider used to retrieve currencies. Default: <see cref="NullCurrencyProvider"/>.</param>
 	/// <param name="roundingMode">The rounding mode used for monetary operations and internal error rounding detection. Default: <see cref="MidpointRounding.ToEven"/>.</param>
 	/// <param name="roundingErrorDecimals">The number of decimal places used for error rounding detection, default is <see cref="DefaultRoundingErrorDecimals"/>.</param>
-	public MonetaryContext(
+	public MonetaContext(
 		ICurrency? defaultCurrency = default,
 		ICurrencyProvider? currencyProvider = default,
 		MidpointRounding roundingMode = default,
@@ -72,6 +72,16 @@ public sealed class MonetaryContext
 		RoundingMode = roundingMode;
 		InternalRoundingErrors = new();
 		RoundingErrorDecimals = roundingErrorDecimals;
+	}
+
+	/// <inheritdoc cref="MonetaContext(Bogoware.Moneta.Abstractions.ICurrency?,Bogoware.Moneta.Abstractions.ICurrencyProvider?,System.MidpointRounding,int)"/>
+	public MonetaContext(
+		string defaultCurrency,
+		ICurrencyProvider currencyProvider,
+		MidpointRounding roundingMode = default,
+		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
+		: this(currencyProvider.GetCurrency(defaultCurrency), currencyProvider, roundingMode, roundingErrorDecimals)
+	{
 	}
 
 	#region Money Factory Methods (Safe ones)
@@ -162,13 +172,30 @@ public sealed class MonetaryContext
 	#endregion Money Factory Methods (Unsafe ones)
 
 	/// <summary>
-	/// Returns true if the specified <see cref="Money"/> instance belongs to the <see cref="MonetaryContext"/>.
+	/// Returns true if the specified <see cref="Money"/> instance belongs to the <see cref="MonetaContext"/>.
 	/// </summary>
 	public bool Owns(Money money) => money.Context == this;
+	
+	/// <summary>
+	/// Throws an exception if the context has rounding errors.
+	/// </summary>
+	/// <exception cref="MonetaryContextWithRoundingErrorsException"></exception>
+	public void EnsureNoRoundingErrors()
+	{
+		if (HasRoundingErrors)
+			throw new MonetaryContextWithRoundingErrorsException(InternalRoundingErrors);
+	}
+	
+	/// <summary>
+	/// Clears the rounding errors.
+	/// </summary>
+	public void ClearRoundingErrors() => InternalRoundingErrors.Clear();
 
 	internal void AddRoundingErrorOperation(RoundingErrorOperation roundingErrorOperation)
 	{
 		if (roundingErrorOperation.Error == 0) return;
 		InternalRoundingErrors.Add(roundingErrorOperation);
 	}
+	
+	public void Dispose() => EnsureNoRoundingErrors();
 }

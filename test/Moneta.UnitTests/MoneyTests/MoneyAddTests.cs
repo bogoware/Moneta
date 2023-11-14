@@ -11,7 +11,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_incompatibleMoney_throwsException()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00M, Euro);
 		var other = context.CreateMoney(1.00M, UsDollar);
 		
@@ -25,7 +25,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaryContext(defaultCurrency: Euro);
+		var context = new MonetaContext(defaultCurrency: Euro);
 		var sut = context.CreateMoney(1.00M);
 		const double amount = 0.12345;
 
@@ -42,7 +42,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaryContext(defaultCurrency: Euro);
+		var context = new MonetaContext(defaultCurrency: Euro);
 		var sut = context.CreateMoney(1.00M);
 		var amount = 0.12345;
 
@@ -62,7 +62,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withSameDecimals_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, Euro);
 		var other = context.CreateMoney(1.23, UndefinedCurrencyWith2Digits);
 
@@ -80,7 +80,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withSameDecimals_withoutError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, Euro);
 		var other = context.CreateMoney(1.23, UndefinedCurrencyWith2Digits);
 
@@ -97,7 +97,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withDifferentDecimals_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, Euro);
 		var other = context.CreateMoney(1.2345, UndefinedCurrencyWith4Digits);
 
@@ -115,7 +115,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withDifferentDecimals_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, Euro);
 		var other = context.CreateMoney(1.2345, UndefinedCurrencyWith4Digits);
 
@@ -137,7 +137,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withDifferentDecimals_withError_isSafe_andReturnsTheMostPreciseCurrency()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, UndefinedCurrencyWith2Digits);
 		var other = context.CreateMoney(1.2345, UndefinedCurrencyWith4Digits);
 		
@@ -155,7 +155,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_compatibleMoneys_withDifferentDecimals_withoutError_isSafe_andReturnsTheMostPreciseCurrency()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00, UndefinedCurrencyWith2Digits);
 		var other = context.CreateMoney(1.2345, UndefinedCurrencyWith4Digits);
 		
@@ -172,7 +172,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_floatingPointNumber_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaryContext(defaultCurrency: Euro);
+		var context = new MonetaContext(defaultCurrency: Euro);
 		var sut = context.CreateMoney(1);
 		var amount = 0.12345;
 		
@@ -190,7 +190,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_floatingPointNumber_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaryContext(defaultCurrency: Euro);
+		var context = new MonetaContext(defaultCurrency: Euro);
 		var sut = context.CreateMoney(1);
 		var amount = 0.12345;
 		
@@ -210,7 +210,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void PlusOperator_withIncompatibleMoneys_throwsException()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var money1 = context.CreateMoney(1.00, Euro);
 		var money2 = context.CreateMoney(1.00, UsDollar);
 		
@@ -224,7 +224,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void PlusOperator_withCompatibleMoneys_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaryContext();
+		var context = new MonetaContext();
 		var money1 = context.CreateMoney(1.00, Euro);
 		var money2 = context.CreateMoney(1.2345, UndefinedCurrencyWith4Digits);
 		

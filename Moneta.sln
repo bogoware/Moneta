@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta.Format", "src\Moneta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moneta.UnitTests", "test\Moneta.UnitTests\Moneta.UnitTests.csproj", "{70C0DC69-E4BB-496D-BC09-4E219BA37D24}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{0257253C-C9DE-4AAC-A4B4-C3E23CBDD519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonetaHelloWorld", "samples\MonetaHelloWorld\MonetaHelloWorld.csproj", "{C273B782-A960-4C66-9A39-165CF7906E0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,7 @@ Global
 		{43DC17BC-E6DA-450C-9197-BC41783ABA63} = {002F870F-F7E1-45DE-A744-565A128159A4}
 		{CF60A82C-17BD-43B8-94DE-9D0228B4CD00} = {002F870F-F7E1-45DE-A744-565A128159A4}
 		{70C0DC69-E4BB-496D-BC09-4E219BA37D24} = {A356C047-C850-484F-AB5E-14DD2BD1DF95}
+		{C273B782-A960-4C66-9A39-165CF7906E0D} = {0257253C-C9DE-4AAC-A4B4-C3E23CBDD519}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{19B8BBF5-431F-436E-91B2-D272CDCA19B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -50,5 +55,9 @@ Global
 		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70C0DC69-E4BB-496D-BC09-4E219BA37D24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C273B782-A960-4C66-9A39-165CF7906E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C273B782-A960-4C66-9A39-165CF7906E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C273B782-A960-4C66-9A39-165CF7906E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C273B782-A960-4C66-9A39-165CF7906E0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

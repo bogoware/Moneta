@@ -6,7 +6,7 @@ public class MonetaryContextMoneyFactoryTests
 	public void CreateMoney_works_withNoResidual()
 	{
 		// Arrange
-		var sut = new MonetaryContext();
+		var sut = new MonetaContext();
 		double originalValue = 1.12;
 		
 		// Act
@@ -22,7 +22,7 @@ public class MonetaryContextMoneyFactoryTests
 	public void CreateMoney_works_withResidual()
 	{
 		// Arrange
-		var sut = new MonetaryContext();
+		var sut = new MonetaContext();
 		double originalValue = 1.123;
 		
 		// Act
@@ -38,7 +38,7 @@ public class MonetaryContextMoneyFactoryTests
 	public void CreateMoney_withSafeCast()
 	{
 		// Arrange
-		var sut = new MonetaryContext();
+		var sut = new MonetaContext();
 		double originalValue = 1.12;
 		
 		// Act
@@ -53,7 +53,7 @@ public class MonetaryContextMoneyFactoryTests
 	public void CreateMoney_withUnsafeCast()
 	{
 		// Arrange
-		var sut = new MonetaryContext();
+		var sut = new MonetaContext();
 		double originalValue = 1.123;
 		
 		// Act
