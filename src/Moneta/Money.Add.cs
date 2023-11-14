@@ -1,4 +1,5 @@
 using System.Numerics;
+using Bogoware.Moneta.Abstractions;
 using Bogoware.Moneta.Exceptions;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -17,35 +18,23 @@ public partial class Money
 	/// <exception cref="CurrencyIncompatibleException">Thrown when the two currencies are not compatible.</exception>
 	public Money Add(Money other, MidpointRounding rounding, out decimal error)
 	{
-		ValidateOperands(this, other);
-		
-		// determine the most specific currency
-		var (finalCurrency, otherCurrencu) = Currency.IsNeutral
-			? (other.Currency, Currency) : (Currency, other.Currency);
-		
-		if (finalCurrency.IsNeutral 
-		    && otherCurrencu.IsNeutral // for the sake of readability, redundant
-		    && otherCurrencu.DecimalPlaces > finalCurrency.DecimalPlaces) // both were neutral currencies
-		{
-			// chose the neutral currency with the most decimal places
-			// swapping them
-			(finalCurrency, otherCurrencu) = (otherCurrencu, finalCurrency);
-		}
-		
-		if (finalCurrency.DecimalPlaces < otherCurrencu.DecimalPlaces)
+		ICurrency.GetMostSpecificCurrency(Currency, other.Currency, out var lessSpecificCurrency,
+			out var mostSpecificCurrency);
+
+		if (mostSpecificCurrency.DecimalPlaces < lessSpecificCurrency.DecimalPlaces)
 		{
 			// This case happens when adding a non neutral currency to a neutral currency with more decimal places.
 			var internalAmount = Math.Round(Amount + other.Amount, Context.RoundingErrorDecimals, rounding);
-			var newAmount = Math.Round(internalAmount, finalCurrency.DecimalPlaces, rounding);
+			var newAmount = Math.Round(internalAmount, mostSpecificCurrency.DecimalPlaces, rounding);
 			error = internalAmount - newAmount;
-			return new(newAmount, finalCurrency, Context);
+			return new(newAmount, mostSpecificCurrency, Context);
 		}
-		
+
 		error = 0;
-		return new(Amount + other.Amount, finalCurrency, Context);
+		return new(Amount + other.Amount, mostSpecificCurrency, Context);
 	}
-	
-	 	
+
+
 	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
 	public Money Add(Money other, out decimal error) => Add(other, Context.RoundingMode, out error);
 

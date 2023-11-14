@@ -18,7 +18,7 @@ public class MoneyAddTests : MoneyBaseTests
 		// Act and Assert
 		sut.Invoking(x => x.Add(other))
 			.Should().Throw<CurrencyIncompatibleException>()
-			.WithMessage("Money 'EUR 1.00' and 'USD 1.00' are not compatible.");
+			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}
 	
 	[Fact]
@@ -217,7 +217,7 @@ public class MoneyAddTests : MoneyBaseTests
 		// Act and Assert
 		money1.Invoking(x => x + money2)
 			.Should().Throw<CurrencyIncompatibleException>()
-			.WithMessage("Money 'EUR 1.00' and 'USD 1.00' are not compatible.");
+			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}
 
 	[Fact]

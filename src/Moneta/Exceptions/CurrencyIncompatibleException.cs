@@ -1,3 +1,5 @@
+using Bogoware.Moneta.Abstractions;
+
 namespace Bogoware.Moneta.Exceptions;
 
 /// <summary>
@@ -6,8 +8,8 @@ namespace Bogoware.Moneta.Exceptions;
 /// </summary>
 public class CurrencyIncompatibleException : InvalidOperationException
 {
-	public CurrencyIncompatibleException(Money lhs, Money rhs)
-		: base($"Money '{lhs}' and '{rhs}' are not compatible.")
+	public CurrencyIncompatibleException(ICurrency lhs, ICurrency rhs)
+		: base($"Currencies '{lhs}' and '{rhs}' are not compatible.")
 	{
 	}
 }

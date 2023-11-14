@@ -1,3 +1,5 @@
+using Bogoware.Moneta.Abstractions;
+
 namespace Bogoware.Moneta;
 
 public partial class Money
@@ -43,7 +45,7 @@ public partial class Money
 	
 	public static Money operator -(Money left, Money right)
 	{
-		ValidateOperands(left, right);
+		ICurrency.MustBeCompatible(left.Currency, right.Currency);
 		return new(left.Amount - right.Amount, left.Currency, left.Context);
 	}
 

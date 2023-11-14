@@ -25,13 +25,4 @@ public partial class Money
 			throw new ArgumentOutOfRangeException(nameof(weights), "All weights must be positive.");
 		}
 	}
-
-	private static void ValidateOperands(Money lhs, Money rhs)
-	{
-		if (lhs.Currency.IsNeutral
-		    || rhs.Currency.IsNeutral
-		    || lhs.Currency == rhs.Currency) return;
-
-		throw new CurrencyIncompatibleException(lhs, rhs);
-	}
 }
