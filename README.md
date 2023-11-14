@@ -4,7 +4,7 @@ Moneta is a library designed to support monetary calculations in a secure manner
 
 ### Summary
 
-* [Monetary Context](#monetary-context)
+* [Moneta Context](#moneta-context)
 * [Money](#money)
 * [Supported Operations](#supported-operations)
   * [Split](#split)
