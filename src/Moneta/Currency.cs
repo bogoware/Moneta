@@ -8,11 +8,6 @@ namespace Bogoware.Moneta;
 public class Currency: Currency<Currency>
 {
 	/// <summary>
-	/// An <see cref="UndefinedCurrency"/> with 2 decimal places.
-	/// </summary>
-	public static ICurrency DefaultUndefined { get; } = new UndefinedCurrency(2);
-
-	/// <summary>
 	/// Initializes a new <see cref="Currency"/> instance.
 	/// </summary>
 	public Currency(string code, string name, string symbol, int decimalPlaces)
@@ -59,7 +54,7 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 	/// <param name="name">The international name of the currency.</param>
 	/// <param name="symbol">The international symbol of the currency.</param>
 	/// <param name="decimalPlaces">The number of decimal places used by the currency.</param>
-	public Currency(
+	protected Currency(
 		string code,
 		string name,
 		string symbol,
@@ -93,9 +88,14 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 public sealed class UndefinedCurrency : Currency<UndefinedCurrency>
 {
 	/// <summary>
+	/// The default number of decimal places for the <see cref="UndefinedCurrency"/>.
+	/// </summary>
+	public const int DefaultDecimalPlaces = 2;
+	
+	/// <summary>
 	/// Instantiate a new <see cref="UndefinedCurrency"/> with the specified number of decimal places.
 	/// </summary>
-	public UndefinedCurrency(int decimalPlaces)
+	public UndefinedCurrency(int decimalPlaces = DefaultDecimalPlaces)
 		: base("XXX", "No Currency", "¤", decimalPlaces,  true)
 	{
 	}

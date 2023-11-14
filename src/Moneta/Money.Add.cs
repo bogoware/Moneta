@@ -1,4 +1,5 @@
 using System.Numerics;
+using Bogoware.Moneta.Exceptions;
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -7,10 +8,57 @@ namespace Bogoware.Moneta;
 public partial class Money
 {
 	/// <summary>
-	/// Add the specified amount to the money.
-	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaryContext"/>. 
+	/// Add the two <see cref="Money"/> instances.
+	/// If both the currencies are neutral, the currency with the most decimal places is chosen, otherwise
+	/// the most specific currency is chosen.
+	/// Two money instances are compatible if they have the same currency code.
+	/// No checks are performed to ensure that the two currencies have also the same decimal places.
 	/// </summary>
+	/// <exception cref="CurrencyIncompatibleException">Thrown when the two currencies are not compatible.</exception>
+	public Money Add(Money other, MidpointRounding rounding, out decimal error)
+	{
+		ValidateOperands(this, other);
+		
+		// determine the most specific currency
+		var (finalCurrency, otherCurrencu) = Currency.IsNeutral
+			? (other.Currency, Currency) : (Currency, other.Currency);
+		
+		if (finalCurrency.IsNeutral 
+		    && otherCurrencu.IsNeutral // for the sake of readability, redundant
+		    && otherCurrencu.DecimalPlaces > finalCurrency.DecimalPlaces) // both were neutral currencies
+		{
+			// chose the neutral currency with the most decimal places
+			// swapping them
+			(finalCurrency, otherCurrencu) = (otherCurrencu, finalCurrency);
+		}
+		
+		if (finalCurrency.DecimalPlaces < otherCurrencu.DecimalPlaces)
+		{
+			// This case happens when adding a non neutral currency to a neutral currency with more decimal places.
+			var internalAmount = Math.Round(Amount + other.Amount, Context.RoundingErrorDecimals, rounding);
+			var newAmount = Math.Round(internalAmount, finalCurrency.DecimalPlaces, rounding);
+			error = internalAmount - newAmount;
+			return new(newAmount, finalCurrency, Context);
+		}
+		
+		error = 0;
+		return new(Amount + other.Amount, finalCurrency, Context);
+	}
+	
+	 	
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
+	public Money Add(Money other, out decimal error) => Add(other, Context.RoundingMode, out error);
+
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
+	public Money Add(Money other)
+	{
+		var result = Add(other, Context.RoundingMode, out var error);
+		var roundingErrorOperation = new AddOperation(error, Currency);
+		Context.AddRoundingErrorOperation(roundingErrorOperation);
+		return result;
+	}
+
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
 	public Money Add<T>(T amount, MidpointRounding rounding, out decimal error) where T : INumber<T>, IConvertible
 	{
 		ValidateType<T>();
@@ -21,16 +69,14 @@ public partial class Money
 		return new(newAmount, Currency, Context);
 	}
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add``1(``0,System.MidpointRounding,System.Decimal@)"/>
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
 	public Money Add<T>(T amount, out decimal error) where T : INumber<T>, IConvertible
 	{
 		var result = Add(amount, Context.RoundingMode, out error);
 		return result;
 	}
 
-	/// <summary>
-	/// Add the specified amount to the money.
-	/// </summary>
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
 	public Money Add<T>(T amount, MidpointRounding rounding) where T : INumber<T>, IConvertible
 	{
 		var result = Add(amount, rounding, out var residue);
@@ -39,7 +85,7 @@ public partial class Money
 		return result;
 	}
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add``1(``0,System.MidpointRounding)"/>
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
 	//[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public Money Add<T>(T amount) where T : INumber<T>, IConvertible
 	{
@@ -49,12 +95,7 @@ public partial class Money
 		return result;
 	}
 
-	public static Money operator +(Money left, Money right)
-	{
-		ValidateOperands(left, right);
-		return new(left.Amount + right.Amount, left.Currency, left.Context);
-	}
-
+	public static Money operator +(Money left, Money right) => left.Add(right);
 	public static Money operator +(Money left, decimal right) => left.Add(right);
 	public static Money operator +(Money left, long right) => left.Add(right);
 	public static Money operator +(Money left, int right) => left.Add(right);

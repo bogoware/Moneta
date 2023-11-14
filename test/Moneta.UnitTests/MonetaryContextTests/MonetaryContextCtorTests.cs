@@ -1,5 +1,6 @@
 using Bogoware.Moneta.Abstractions;
 using Bogoware.Moneta.CurrencyProviders;
+using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta.UnitTests.MonetaryContextTests;
 
@@ -13,7 +14,7 @@ public class MonetaryContextCtorTests
 		var sut = new MonetaryContext();
 		
 		// Assert
-		sut.DefaultCurrency.Should().Be(Currency.DefaultUndefined);
+		sut.DefaultCurrency.Should().Be(new UndefinedCurrency());
 		sut.RoundingMode.Should().Be(MidpointRounding.ToEven);
 		sut.RoundingErrorDecimals.Should().Be(8);
 		sut.HasRoundingErrors.Should().BeFalse();
@@ -43,5 +44,19 @@ public class MonetaryContextCtorTests
 		sut.RoundingErrorDecimals.Should().Be(4);
 		sut.HasRoundingErrors.Should().BeFalse();
 		sut.RoundingErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void MonetaryContext_cannotCreateMoney_withMoreDecimalPlaces_thanTheRoundingErrorDecimals()
+	{
+		// Arrange
+		var currency = new Currency("CUR", "Currency", "C", 10);
+		var sut = new MonetaryContext(roundingErrorDecimals: 4);
+		
+		// Act
+		sut
+			.Invoking(s => s.CreateMoney(1, currency))
+			.Should().Throw<MonetaryContextInvalidConfigurationException>()
+			.WithMessage("The currency CUR has more decimal places (10) than the rounding error decimals (4).");
 	}
 }

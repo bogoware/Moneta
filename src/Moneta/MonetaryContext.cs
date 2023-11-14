@@ -17,7 +17,7 @@ public sealed class MonetaryContext
 	public const int DefaultRoundingErrorDecimals = 8;
 
 	/// <summary>
-	/// The default <see cref="Currency"/> for monetary operations
+	/// The default <see cref="Currency"/> for new money instances.
 	/// </summary>
 	public ICurrency DefaultCurrency { get; }
 
@@ -56,6 +56,10 @@ public sealed class MonetaryContext
 	/// <summary>
 	/// Initializes a new <see cref="MonetaryContext"/> instance.
 	/// </summary>
+	/// <param name="defaultCurrency">The currency used to create new money. Default: <see cref="DefaultCurrency"/>.</param>
+	/// <param name="currencyProvider">The currency provider used to retrieve currencies. Default: <see cref="NullCurrencyProvider"/>.</param>
+	/// <param name="roundingMode">The rounding mode used for monetary operations and internal error rounding detection. Default: <see cref="MidpointRounding.ToEven"/>.</param>
+	/// <param name="roundingErrorDecimals">The number of decimal places used for error rounding detection, default is <see cref="DefaultRoundingErrorDecimals"/>.</param>
 	public MonetaryContext(
 		ICurrency? defaultCurrency = default,
 		ICurrencyProvider? currencyProvider = default,
@@ -63,7 +67,7 @@ public sealed class MonetaryContext
 		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roundingErrorDecimals, 4);
-		DefaultCurrency = defaultCurrency ?? Currency.DefaultUndefined;
+		DefaultCurrency = defaultCurrency ?? new UndefinedCurrency();
 		CurrencyProvider = currencyProvider ?? new NullCurrencyProvider();
 		RoundingMode = roundingMode;
 		InternalRoundingErrors = new();
@@ -80,6 +84,10 @@ public sealed class MonetaryContext
 	{
 		// ReSharper disable SuggestVarOrType_BuiltInTypes
 		Money.ValidateType<T>();
+		if (currency.DecimalPlaces > RoundingErrorDecimals)
+			throw new MonetaryContextInvalidConfigurationException(
+				$"The currency {currency.Code} has more decimal places ({currency.DecimalPlaces}) than the rounding error decimals ({RoundingErrorDecimals}).");
+		
 		decimal decimalAmount = Convert.ToDecimal(amount);
 		decimal approximatedAmount = Math.Round(decimalAmount, RoundingErrorDecimals, roundingMode);
 		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);

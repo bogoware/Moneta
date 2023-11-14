@@ -20,7 +20,7 @@ public class MoneySplitTests
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
-		var expectedPart = moneyContext.CreateMoney(expectedPartAmount, Currency.DefaultUndefined);
+		var expectedPart = moneyContext.CreateMoney(expectedPartAmount);
 
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
