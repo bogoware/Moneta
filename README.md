@@ -93,6 +93,30 @@ In particular:
 * All binary operations between a `Money` value and a floating point number are unsafe operations.
 * All `Money.Map` operations are unsafe operations.
 
+### Supported Operations
+
+In the following table there'is a recap of all the supported operations and their safety.
+An operation is considered safe if it can generate a rounding error and return it to the caller
+or it cannot generate a rounding error in any case.
+
+For example, the `Split` operation provides different overload methods, both safe and unsafe.
+
+Operation | Safe | Unsafe | Notes
+--- |----|-----| ---
+`MonetaContext.Create` | Yes | Yes | Allocate a new `Money`.
+`Split` | Yes | Yes | Split the value of a `Money` into a list of `Money` instances. There are two overloads: one that takes the number of parts and one that takes a list of weights.
+`Apply` | Yes | Yes | Apply a function to the `Money`
+`Map` | No | Yes | Similaer to `Aplply` but it doesn't return the rounding error. Suitable for functional style programming.
+`Add` | Yes | Yes | Adds a numeric value or a compatible `Money`
+`Subtract` | Yes | Yes | Subtracts a numeric value or a compatible `Money`
+`Multiply` | Yes | Yes | Multiplies for a numeric value
+`Divide`| Yes | Yes | Divides by a numeric value
+`Negate` | Yes | No  | Negates the `Money` amount
++, -, *, / with floating point numbers| No | Yes | The arithmetic operators. Binary operators between a `Money` value and a floating point number are unsafe operations.
++, - with `Money` values with the same `Currency` or integral numbers or between any kind of `UndefinedCurrency` | Yes | No  | Binary operators between `Money` values with the same `Currency` or integral numbers are safe operations
++, - with `Money` values with `UndefinedCurrency` with different `DecimalPlaces` | No | Yes | Binary operators between `Money` values with `UndefinedCurrency` a number of `DecimalPlaces` greather than the value with a defined currency are unsafe.
+
+
 ### Currency System
 
 #### Undefined Currency
