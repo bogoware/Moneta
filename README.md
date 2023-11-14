@@ -40,6 +40,8 @@ The supported operations are:
 * `Negate`: will negate the `Money` value and return a new `Money` instance with the same `Currency`.
 * `CompareTo`: will compare the `Money` value with another `Money` instance or a number. If the `Money` instances have different `Currencies`, and the `MonetaryContext` has an `IExchangeRateProvider`, the `Money` instances will be converted to the same `Currency` before the comparison, otherwise an exception will be thrown.
 
+And of course you can also use basic operators such as `+`, `-`, `*`, `/`, `==`, `!=`, `>`, `>=`, `<`, `<=`. All the binary operators between a `Money` instance and a number are unsafe operations (see [Safe and Unsafe Operations](#safe-and-unsafe-operations)).
+
 ### Currency
 
 In Moneta, a Currency is any instance of `Currency<TSelf>`. There are no strict constraints on what qualifies as a valid currency; you are free to introduce your own currency as long as it fits your domain. The only requirement is that currencies with the same `Code` are treated as equivalent.
