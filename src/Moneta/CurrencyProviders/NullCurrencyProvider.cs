@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Bogoware.Moneta.Abstractions;
 
 namespace Bogoware.Moneta.CurrencyProviders;
 

@@ -1,7 +1,4 @@
-using System.Numerics;
-using Bogoware.Moneta.Abstractions;
 using Bogoware.Moneta.CurrencyProviders;
-using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta;
 

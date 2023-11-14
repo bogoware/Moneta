@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta.Abstractions;
 

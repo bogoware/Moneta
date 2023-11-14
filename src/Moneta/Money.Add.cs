@@ -1,6 +1,4 @@
-using System.Numerics;
-using Bogoware.Moneta.Abstractions;
-using Bogoware.Moneta.Exceptions;
+
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -9,12 +7,10 @@ namespace Bogoware.Moneta;
 public partial class Money
 {
 	/// <summary>
-	/// Add the two <see cref="Money"/> instances.
-	/// If both the currencies are neutral, the currency with the most decimal places is chosen, otherwise
-	/// the most specific currency is chosen.
-	/// Two money instances are compatible if they have the same currency code.
-	/// No checks are performed to ensure that the two currencies have also the same decimal places.
+	/// Add the two <see cref="Money"/> instances and return a new <see cref="Money"/> instance
+	/// with the the most specific currency between the two.
 	/// </summary>
+	/// <seealso cref="M:Bogoware.Moneta.Abstractions.ICurrency.GetMostSpecificCurrency(Bogoware.Moneta.Abstractions.ICurrency,Bogoware.Moneta.Abstractions.ICurrency,Bogoware.Moneta.Abstractions.ICurrency@,Bogoware.Moneta.Abstractions.ICurrency@)"/>
 	/// <exception cref="CurrencyIncompatibleException">Thrown when the two currencies are not compatible.</exception>
 	public Money Add(Money other, MidpointRounding rounding, out decimal error)
 	{
@@ -47,7 +43,9 @@ public partial class Money
 		return result;
 	}
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
+	/// <summary>
+	/// Add the number to the <see cref="Money"/>.
+	/// </summary>
 	public Money Add<T>(T amount, MidpointRounding rounding, out decimal error) where T : INumber<T>, IConvertible
 	{
 		ValidateType<T>();
@@ -58,14 +56,11 @@ public partial class Money
 		return new(newAmount, Currency, Context);
 	}
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
-	public Money Add<T>(T amount, out decimal error) where T : INumber<T>, IConvertible
-	{
-		var result = Add(amount, Context.RoundingMode, out error);
-		return result;
-	}
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add``1(``0,System.MidpointRounding,System.Decimal@)"/>
+	public Money Add<T>(T amount, out decimal error) where T : INumber<T>, IConvertible =>
+		Add(amount, Context.RoundingMode, out error);
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.Decimal@)"/>
 	public Money Add<T>(T amount, MidpointRounding rounding) where T : INumber<T>, IConvertible
 	{
 		var result = Add(amount, rounding, out var residue);
@@ -74,7 +69,7 @@ public partial class Money
 		return result;
 	}
 
-	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
+	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add``1(``0,System.MidpointRounding,System.Decimal@)"/>
 	//[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public Money Add<T>(T amount) where T : INumber<T>, IConvertible
 	{

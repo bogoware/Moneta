@@ -1,5 +1,3 @@
-using Bogoware.Moneta.Exceptions;
-
 namespace Bogoware.Moneta.Abstractions;
 
 /// <summary>

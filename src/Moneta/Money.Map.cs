@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Bogoware.Moneta;
 
 public partial class Money
