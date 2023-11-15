@@ -104,7 +104,7 @@ For example, the `Split` operation provides different overload methods, both saf
 Operation | Safe | Unsafe | Notes
 --- |----|-----| ---
 `MonetaContext.Create` | Yes | Yes | Allocate a new `Money`.
-`Split` | Yes | Yes | Split the value of a `Money` into a list of `Money` instances. There are two overloads: one that takes the number of parts and one that takes a list of weights.
+`Split` | Yes | Yes | Split the value of a `Money` into a list of `Money` instances. There are two overloads: one that takes the number of parts and one that takes a list of weights. Split methods returns also the unallocated `Money` amount and the rounding error in case of weighted split.
 `Apply` | Yes | Yes | Apply a function to the `Money`
 `Map` | No | Yes | Similaer to `Aplply` but it doesn't return the rounding error. Suitable for functional style programming.
 `Add` | Yes | Yes | Adds a numeric value or a compatible `Money`
@@ -206,8 +206,27 @@ using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 } // KO! Exception thrown
 ```
 
-### Creating a Moneta Context
+###  Sample 4: weighted split with unallocated money and rounding error
 
 ```csharp
+using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+{
+    var money = context.CreateMoney(11.11);
+    var weights = Enumerable.Repeat(0.333333, 3);
+
+	var split = money.Split(weights, MidpointRounding.ToEven, out var unallocated);
+
+	Console.WriteLine($"The original amount is {money}");
+	Console.WriteLine($"The allocated amounts are: {string.Join(", ", split)}");
+	Console.WriteLine($"The unallocated amount is {unallocated}");
+} // OK!
+```
+
+will produce the following output:
+
+```
+The original amount is EUR 11.11
+The allocated amounts are: EUR 3.70, EUR 3.70, EUR 3.70
+The unallocated amount is EUR 0.01
 
 ```

@@ -38,4 +38,16 @@ public partial class Money : IEquatable<Money>
 		Currency = currency;
 		Context = context;
 	}
+
+	public void Deconstruct(out decimal amount, out ICurrency currency)
+	{
+		amount = Amount;
+		currency = Currency;
+	}
+	
+	public void Deconstruct(out decimal amount, out string currency)
+	{
+		amount = Amount;
+		currency = Currency.Code;
+	}
 }

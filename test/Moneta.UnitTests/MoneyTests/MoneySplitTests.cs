@@ -16,7 +16,7 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(amount);
 
 		// Act
-		var parts = sut.Split(numberOfParts, out var residue);
+		var parts = sut.Split(numberOfParts, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
@@ -24,8 +24,8 @@ public class MoneySplitTests
 
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
-		residue.Should().Be(expectedResidueAmount);
-		(totalAmount + residue).Should().Be(amount);
+		unallocated.Amount.Should().Be(expectedResidueAmount);
+		(totalAmount + unallocated).Amount.Should().Be(amount);
 	}
 
 	[Fact]
@@ -36,13 +36,13 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
-		var parts = sut.Split(100, out var residue);
+		var parts = sut.Split(100, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
 		parts.Should().HaveCount(100);
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -53,13 +53,13 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
-		var parts = sut.Split(100, out var residue);
+		var parts = sut.Split(100, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
 		parts.Should().HaveCount(100);
-		residue.Should().Be(0.01M);
-		(totalAmount + residue).Should().Be(10.01M);
+		unallocated.Amount.Should().Be(0.01M);
+		(totalAmount + unallocated).Amount.Should().Be(10.01M);
 	}
 
 	[Fact]
@@ -70,14 +70,14 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
-		var parts = sut.Split(Enumerable.Repeat(1, 10), out var residue);
+		var parts = sut.Split(Enumerable.Repeat(1, 10), out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
 		parts.Should().HaveCount(10);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1M));
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -89,7 +89,7 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
@@ -100,8 +100,8 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(4M), 
 			moneyContext.CreateMoney(2M)
 		});
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -113,7 +113,7 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
@@ -124,8 +124,8 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(3.33M), 
 			moneyContext.CreateMoney(1.67M)
 		});
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -136,14 +136,14 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10.01M);
 
 		// Act
-		var parts = sut.Split(Enumerable.Repeat(1, 10), out var residue);
+		var parts = sut.Split(Enumerable.Repeat(1, 10), out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 
 		// Assert
 		parts.Should().HaveCount(10);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1.00M));
-		residue.Should().Be(0.01M);
-		(totalAmount + residue).Should().Be(10.01M);
+		unallocated.Amount.Should().Be(0.01M);
+		(totalAmount + unallocated).Amount.Should().Be(10.01M);
 	}
 
 	[Fact]
@@ -155,7 +155,7 @@ public class MoneySplitTests
 		var sut = moneyContext.CreateMoney(10M);
 
 		// Act
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
@@ -166,8 +166,8 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(2.18M), //  53 / (177 + 53 + 13) * 10 rounded to 2 decimal places
 			moneyContext.CreateMoney(0.53M)  //  13 / (177 + 53 + 13) * 10 rounded to 2 decimal places
 		});
-		residue.Should().Be(0.01000000M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0.01M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -179,14 +179,14 @@ public class MoneySplitTests
 		
 		// Act
 		var weights = new[] { 1.0f, 1.0f };
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
 		parts.Should().HaveCount(2);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5M));
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 	
 	[Fact]
@@ -198,7 +198,7 @@ public class MoneySplitTests
 		
 		// Act
 		var weights = new[] { 1.25f, 1.50f, 1.75f };
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
@@ -209,8 +209,8 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(3.33M), // 1.50 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
 			moneyContext.CreateMoney(3.89M)  // 1.75 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
 		});
-		residue.Should().Be(0M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 	[Fact]
@@ -222,14 +222,14 @@ public class MoneySplitTests
 		
 		// Act
 		var weights = new[] { 1.0f, 1.0f };
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
 		parts.Should().HaveCount(2);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5.00M));
-		residue.Should().Be(0.01M);
-		(totalAmount + residue).Should().Be(10.01M);
+		unallocated.Amount.Should().Be(0.01M);
+		(totalAmount + unallocated).Amount.Should().Be(10.01M);
 	}
 
 	[Fact]
@@ -241,7 +241,7 @@ public class MoneySplitTests
 		
 		// Act
 		var weights = new[] { 1f, 1.3333f, 1.6666f };
-		var parts = sut.Split(weights, out var residue);
+		var parts = sut.Split(weights, out var unallocated);
 		var totalAmount = parts.Sum(x => x.Amount);
 		
 		// Assert
@@ -252,8 +252,8 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(3.33M), // 1.3333 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
 			moneyContext.CreateMoney(4.16M)  // 1.6666 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
 		});
-		residue.Should().Be(0.01M);
-		(totalAmount + residue).Should().Be(10M);
+		unallocated.Amount.Should().Be(0.01M);
+		(totalAmount + unallocated).Amount.Should().Be(10M);
 	}
 
 
