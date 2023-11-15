@@ -60,7 +60,7 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 	var money = context.CreateMoney(11.11);
 	var weights = Enumerable.Repeat(0.333333, 3);
 
-	var split = money.Split(weights, MidpointRounding.ToEven, out var unallocated);
+	var split = money.Split(weights, out var unallocated);
 
 	Console.WriteLine($"The original amount is {money}");
 	Console.WriteLine($"The allocated amounts are: {string.Join(", ", split)}");
