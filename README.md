@@ -99,7 +99,7 @@ In the following table there'is a recap of all the supported operations and thei
 An operation is considered safe if it can generate a rounding error and return it to the caller
 or it cannot generate a rounding error in any case.
 
-For example, the `Split` operation provides different overload methods, both safe and unsafe.
+For example, the `Split` operation provides different overload methods, both safe and unsafe. 
 
 Operation | Safe | Unsafe | Notes
 --- |----|-----| ---
