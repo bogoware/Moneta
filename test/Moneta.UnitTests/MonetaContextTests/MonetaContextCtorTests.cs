@@ -4,17 +4,17 @@ using Bogoware.Moneta.Exceptions;
 
 namespace Bogoware.Moneta.UnitTests.MonetaryContextTests;
 
-public class MonetaryContextCtorTests
+public class MonetaContextCtorTests
 {
 
 	[Fact]
-	public void MonetaryContext_voidCtor()
+	public void MonetaContext_voidCtor()
 	{
 		// Act
 		var sut = new MonetaContext();
 		
 		// Assert
-		sut.DefaultCurrency.Should().Be(new UndefinedCurrency());
+		sut.DefaultCurrency.Should().Be(UndefinedCurrency.Instance);
 		sut.RoundingMode.Should().Be(MidpointRounding.ToEven);
 		sut.RoundingErrorDecimals.Should().Be(8);
 		sut.HasRoundingErrors.Should().BeFalse();
@@ -31,7 +31,7 @@ public class MonetaryContextCtorTests
 	}
 	
 	[Fact]
-	public void MonetaryContext_customCtor()
+	public void Context_customCtor()
 	{
 		// Act
 		var currencyProvider = new IsoCurrencyProvider();
@@ -47,7 +47,7 @@ public class MonetaryContextCtorTests
 	}
 
 	[Fact]
-	public void MonetaryContext_cannotCreateMoney_withMoreDecimalPlaces_thanTheRoundingErrorDecimals()
+	public void Context_cannotCreateMoney_withMoreDecimalPlaces_thanTheRoundingErrorDecimals()
 	{
 		// Arrange
 		var currency = new Currency("CUR", "Currency", "C", 10);

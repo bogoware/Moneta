@@ -2,11 +2,11 @@ namespace Bogoware.Moneta;
 
 public partial class Money
 {
-	internal static void ValidateType<T>() where T : INumber<T>, IConvertible
+	internal static decimal ValidateAndGetDecimalValue<T>(T value) where T : INumber<T>, IConvertible
 	{
 		try
 		{
-			decimal d = Convert.ToDecimal(T.Zero);
+			return Convert.ToDecimal(value);
 		}
 		catch (InvalidCastException)
 		{

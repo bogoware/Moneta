@@ -26,18 +26,9 @@ public class CurrencyCompatibilityTests : CurrencyBaseTests
 	[Fact]
 	public void Euro_and_undefined2digits_are_compatible()
 	{
-		ICurrency.AreCompatible(Eur, Undefined2digits).Should().BeTrue();
+		ICurrency.AreCompatible(Eur, Undefined).Should().BeTrue();
 
-		Eur.Invoking(x => ICurrency.MustBeCompatible(x, Undefined2digits))
-			.Should().NotThrow();
-	}
-
-	[Fact]
-	public void Undefined2digits_and_undefined4digits_are_compatible()
-	{
-		ICurrency.AreCompatible(Undefined2digits, Undefined4digits).Should().BeTrue();
-
-		Undefined2digits.Invoking(x => ICurrency.MustBeCompatible(x, Undefined4digits))
+		Eur.Invoking(x => ICurrency.MustBeCompatible(x, Undefined))
 			.Should().NotThrow();
 	}
 }

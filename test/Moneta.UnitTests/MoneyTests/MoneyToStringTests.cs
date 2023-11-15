@@ -20,13 +20,13 @@ public class MoneyToStringTests: MoneyBaseTests
 	public void Money_UndefinedToString_works()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(defaultCurrency: UndefinedCurrencyWith4Digits);
-		var sut = moneyContext.CreateMoney(10.1M);
+		var moneyContext = new MonetaContext(defaultCurrency: UndefinedCurrency.Instance);
+		var sut = moneyContext.CreateMoney(10.1001M);
 
 		// Act
 		var result = sut.ToString();
 
 		// Assert
-		result.Should().Be("XXX 10.1000");
+		result.Should().Be("XXX 10.1001");
 	}
 }

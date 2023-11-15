@@ -43,7 +43,7 @@ public class MoneyMapTests
 		var result = sut.Map(MoneyApplyTests.UnsafeMoneyTransformation);
 
 		// Assert
-		result.Amount.Should().Be(0.84M);
+		result.Amount.Should().Be(0.8415M);
 		moneyContext.HasRoundingErrors.Should().BeTrue();
 	}
 	
@@ -58,7 +58,7 @@ public class MoneyMapTests
 		var result = sut.Map(MoneyApplyTests.UnsafeDecimalTransformation);
 
 		// Assert
-		result.Amount.Should().Be(0.84M);
+		result.Amount.Should().Be(0.8415M);
 		moneyContext.HasRoundingErrors.Should().BeTrue();
 	}
 }

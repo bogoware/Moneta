@@ -41,6 +41,53 @@ A `MonetaContext` defines the following:
 * The decimal precision used to detect rounding errors (see `RoundingErrorDecimals`). By default, all internal operations are rounded to 8 decimal places, but you can change this value up to 28 decimal places. For instance, this is useful for operations involving cryptocurrencies, which often have many decimal places.
 * A log of operations that have resulted in rounding errors (according to the `RoundingErrorDecimals` value).
 
+### The Principle of Monetary Value Conservation
+
+In Moneta holds the «Monetary Value Conservation Principle»: no monetary value is created or lost during the lifetime of a `MonetaContext`.
+
+Moneta will provide means to keep track of any monetary value created or lost during the lifetime of a `MonetaContext`
+and make it available to the user who can decide how to handle it.
+
+There are basically two main causes of monetary value creation or loss:
+* Split Operations: which can produce an unallocated part, both positive or negative depending by the `RoundingMode` used.
+* Floating Point Operations with floating point numbers more precise than the `Currency` of the `Money` involved in the operation.
+
+#### Rounding Error Detection
+
+A *rounding error* occurs when an operation cannot be performed without losing precision.
+These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and
+the `MonetaContext.RoundingErrorDecimals`.
+
+Every floating point operand involved in a monetary operation is rounded to the `MonetaContext.RoundingErrorDecimals`
+before the operation is performed. The result of the operation is then rounded to the `Currency` of the `Money` involved.
+The difference between the two values is the rounding error.
+
+The 'error' returned by the safe operations is a `decimal` value that represents the amount of monetary value created
+or lost during the operation.
+
+For example, if you perform the operation `1.00 EUR + 0.1234` with rounding mode `ToZero` or `ToEven` you will get `1.12 EUR` with a rounding error of `0.0034`,
+which is the amount of monetary value lost during the operation.
+But if you perform the same operation with rounding mode `ToPositiveInfinity` you will get `1.13 EUR` with a rounding error of `-0.0066`,
+which is the amount of monetary value created during the operation.
+
+In both cases, if you could operate in an infinite precision context, adding the error returned will restore the original monetary value.
+
+### Moneta API Design
+
+Moneta main design goal is to support safe monetary calculations through a fluent algebraic API.
+
+For every supported operation, Moneta provides two set of overloads:
+* *safe* overloads that returns the rounding error or, in the case of the `Spilt` operations, the unallocated part
+* *unsafe* overloads that doesn't return the created or lost monetary value and relies on the `MonetaContext` to keep track of it.
+
+The `error` or `unallocated` part returned by the safe overloads represents a quantity of the monetary value that has been created or lost during the operation.
+
+Adding that value to the result of the operation will restore the original monetary value.
+
+
+
+
+
 ### Money
 
 `Money` is Moneta's data type for representing monetary values. It consists of a `decimal` value associated with a `Currency`.
@@ -62,16 +109,6 @@ In Moneta, a Currency is any instance of `Currency<TSelf>`. There are no strict 
 #### Currency Decimal Places
 
 An important characteristic of a currency is the number of decimal places it supports. When you perform a monetary operation, the result is rounded based on the currency's decimal precision, potentially resulting in rounding errors.
-
-### Rounding Error Detection
-
-Moneta aims to facilitate secure monetary calculations through a fluent algebraic API. The design goal is to provide an API that allows you to conduct monetary operations within a secure context, detecting and reporting any potential rounding errors. This way, you can manage them according to your domain requirements.
-
-A *rounding error* occurs when an operation cannot be performed without losing precision. These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and the `MonetaContext.RoundingErrorDecimals`.
-
-There are two main causes of rounding errors:
-* Split Operations
-* Floating Point Operations
 
 ##### Rounding Errors in Split Operations
 

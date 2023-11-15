@@ -15,19 +15,10 @@ public class CurrencyMostSpecificTests : CurrencyBaseTests
 	[Fact]
 	public void Euro_is_more_specific_than_undefined2digits()
 	{
-		ICurrency.GetMostSpecificCurrency(Eur, Undefined2digits, out var lessSpecific, out var mostSpecific);
+		ICurrency.GetMostSpecificCurrency(Eur, Undefined, out var lessSpecific, out var mostSpecific);
 		
-		lessSpecific.Should().Be(Undefined2digits);
+		lessSpecific.Should().Be(Undefined);
 		mostSpecific.Should().Be(Eur);
-	}
-	
-	[Fact]
-	public void Undefined4digits_is_more_specific_than_undefined2digits()
-	{
-		ICurrency.GetMostSpecificCurrency(Undefined4digits, Undefined2digits, out var lessSpecific, out var mostSpecific);
-		
-		lessSpecific.Should().Be(Undefined2digits);
-		mostSpecific.Should().Be(Undefined4digits);
 	}
 	
 }

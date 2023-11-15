@@ -1,6 +1,11 @@
 ﻿using Bogoware.Moneta;
 using Bogoware.Moneta.CurrencyProviders;
 
+var currency = new Currency("BITCOIN", "Bitcoin", "B", 8);
+using (var context = new MonetaContext(currency))
+{
+};
+
 using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 {
 	Console.WriteLine("Sample 1: no rounding errors occurred");

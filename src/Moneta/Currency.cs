@@ -80,21 +80,20 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 }
 
 /// <summary>
-/// This currency is used to represent a monetary value that has no currency and can
+/// This currency is used to represent a monetary value with 4 decimal places that has no currency and can
 /// be used in any operation with any other currency.
 /// </summary>
 public sealed class UndefinedCurrency : Currency<UndefinedCurrency>
 {
-	/// <summary>
-	/// The default number of decimal places for the <see cref="UndefinedCurrency"/>.
-	/// </summary>
-	public const int DefaultDecimalPlaces = 2;
+	private const int DECIMAL_PLACES = 4;
+	
+	public static readonly UndefinedCurrency Instance = new();
 	
 	/// <summary>
 	/// Instantiate a new <see cref="UndefinedCurrency"/> with the specified number of decimal places.
 	/// </summary>
-	public UndefinedCurrency(int decimalPlaces = DefaultDecimalPlaces)
-		: base("XXX", "No Currency", "¤", decimalPlaces,  true)
+	private UndefinedCurrency()
+		: base("XXX", "No Currency", "¤", DECIMAL_PLACES,  true)
 	{
 	}
 }

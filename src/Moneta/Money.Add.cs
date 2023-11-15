@@ -2,10 +2,24 @@
 
 // ReSharper disable MemberCanBePrivate.Global
 
+using static System.Math;
+
 namespace Bogoware.Moneta;
 
 public partial class Money
 {
+	/// <summary>
+	/// Add the number to the <see cref="Money"/>.
+	/// </summary>
+	public Money Add<T>(T amount, MidpointRounding rounding, out decimal error) where T : INumber<T>, IConvertible
+	{
+		var decimalAmount = ValidateAndGetDecimalValue(amount);
+		var internalAmount = Round(Amount + decimalAmount, Context.RoundingErrorDecimals, rounding);
+		var newAmount = Round(internalAmount, Currency.DecimalPlaces, rounding);
+		error = internalAmount - newAmount;
+		return new(newAmount, Currency, Context);
+	}
+
 	/// <summary>
 	/// Add the two <see cref="Money"/> instances and return a new <see cref="Money"/> instance
 	/// with the the most specific currency between the two.
@@ -14,20 +28,9 @@ public partial class Money
 	/// <exception cref="CurrencyIncompatibleException">Thrown when the two currencies are not compatible.</exception>
 	public Money Add(Money other, MidpointRounding rounding, out decimal error)
 	{
-		ICurrency.GetMostSpecificCurrency(Currency, other.Currency, out var lessSpecificCurrency,
-			out var mostSpecificCurrency);
-
-		if (mostSpecificCurrency.DecimalPlaces < lessSpecificCurrency.DecimalPlaces)
-		{
-			// This case happens when adding a non neutral currency to a neutral currency with more decimal places.
-			var internalAmount = Math.Round(Amount + other.Amount, Context.RoundingErrorDecimals, rounding);
-			var newAmount = Math.Round(internalAmount, mostSpecificCurrency.DecimalPlaces, rounding);
-			error = internalAmount - newAmount;
-			return new(newAmount, mostSpecificCurrency, Context);
-		}
-
-		error = 0;
-		return new(Amount + other.Amount, mostSpecificCurrency, Context);
+		ICurrency.MustBeCompatible(Currency, other.Currency);
+		
+		return Add(other.Amount, rounding, out error);
 	}
 
 
@@ -41,19 +44,6 @@ public partial class Money
 		var roundingErrorOperation = new AddOperation(error, Currency);
 		Context.AddRoundingErrorOperation(roundingErrorOperation);
 		return result;
-	}
-
-	/// <summary>
-	/// Add the number to the <see cref="Money"/>.
-	/// </summary>
-	public Money Add<T>(T amount, MidpointRounding rounding, out decimal error) where T : INumber<T>, IConvertible
-	{
-		ValidateType<T>();
-		decimal decimalAmount = Convert.ToDecimal(amount);
-		var internalAmount = Math.Round(Amount + decimalAmount, Context.RoundingErrorDecimals, rounding);
-		var newAmount = Math.Round(internalAmount, Currency.DecimalPlaces, rounding);
-		error = internalAmount - newAmount;
-		return new(newAmount, Currency, Context);
 	}
 
 	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Add``1(``0,System.MidpointRounding,System.Decimal@)"/>

@@ -64,7 +64,7 @@ public sealed class MonetaContext: IDisposable
 		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roundingErrorDecimals, 4);
-		DefaultCurrency = defaultCurrency ?? new UndefinedCurrency();
+		DefaultCurrency = defaultCurrency ?? UndefinedCurrency.Instance;
 		CurrencyProvider = currencyProvider ?? new NullCurrencyProvider();
 		RoundingMode = roundingMode;
 		InternalRoundingErrors = new();
@@ -89,15 +89,13 @@ public sealed class MonetaContext: IDisposable
 	public Money CreateMoney<T>(T amount, ICurrency currency, MidpointRounding roundingMode, out decimal error)
 		where T : INumber<T>, IConvertible
 	{
-		// ReSharper disable SuggestVarOrType_BuiltInTypes
-		Money.ValidateType<T>();
 		if (currency.DecimalPlaces > RoundingErrorDecimals)
 			throw new MonetaryContextInvalidConfigurationException(
 				$"The currency {currency.Code} has more decimal places ({currency.DecimalPlaces}) than the rounding error decimals ({RoundingErrorDecimals}).");
 		
-		decimal decimalAmount = Convert.ToDecimal(amount);
-		decimal approximatedAmount = Math.Round(decimalAmount, RoundingErrorDecimals, roundingMode);
-		decimal newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);
+		var decimalAmount = Money.ValidateAndGetDecimalValue(amount);
+		var approximatedAmount = Math.Round(decimalAmount, RoundingErrorDecimals, roundingMode);
+		var newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);
 		error = approximatedAmount - newAmount;
 		return new(newAmount, currency, this);
 	}

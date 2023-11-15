@@ -71,7 +71,7 @@ public partial class Money
 	{
 		// ReSharper disable PossibleMultipleEnumeration
 		// ReSharper disable LoopCanBeConvertedToQuery
-		ValidateType<T>();
+		ValidateAndGetDecimalValue(T.Zero); // Validate T is convertible to decimal
 		ValidateWeights(weights);
 
 		var parts = new List<Money>(weights.Count());
@@ -81,7 +81,7 @@ public partial class Money
 			totalWeight += weight;
 		}
 
-		var decimalTotalWeight = Convert.ToDecimal(totalWeight);
+		var decimalTotalWeight = ValidateAndGetDecimalValue(totalWeight);
 
 		decimal allocatedAmount = 0;
 		foreach (var weight in weights)
