@@ -98,6 +98,8 @@ which is the amount of monetary value lost during the operation.
 But if you perform the same operation with rounding mode `ToPositiveInfinity` you will get `1.13 EUR` with a rounding error of `-0.0066`,
 which is the amount of monetary value created during the operation.
 
+It's up to you to decide which treatment to apply to the rounding errors depending by your domain requirements.
+
 ### Moneta API Design
 
 Moneta main design goal is to support safe monetary calculations through a fluent algebraic API.
