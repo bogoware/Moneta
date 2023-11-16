@@ -75,7 +75,7 @@ Every safe operation will return a `decimal` value or, in the case of the [Split
 Unsafe operations, instead, will keep track of the operation and the error occurred.
 
 Schematically, let's assume that:
-* `OP` is the operation performed
+* `•` is the operation performed
 * `M` is the `Money` involved in the operation
 * `V` is the value (`decimal`, `double` or `float`) involved in the operation
 * `R` is the `Money` returned by the operation
@@ -84,10 +84,8 @@ Schematically, let's assume that:
 then the following equation holds:
 
 ```
-M OP V = R + E
+M • V = R + E
 ```
-The 'error' returned by the safe operations is a `decimal` value that represents the amount of monetary value created
-or lost during the operation.
 
 > [!NOTE]
 > `error` is positive in case of monetary value lost and negative in case of monetary value created.
