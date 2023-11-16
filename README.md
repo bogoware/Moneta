@@ -5,6 +5,8 @@ Moneta is a library designed to support monetary calculations in a secure manner
 ### Summary
 
 * [Moneta Context](#moneta-context)
+* [The Principle of Monetary Value Conservation](#the-principle-of-monetary-value-conservation)
+  * [Rounding Error Detection](#rounding-error-detection)
 * [Money](#money)
 * [Supported Operations](#supported-operations)
   * [Split](#split)
@@ -56,21 +58,49 @@ There are basically two main causes of monetary value creation or loss:
 
 A *rounding error* occurs when an operation cannot be performed without losing precision.
 These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and
-the `MonetaContext.RoundingErrorDecimals`.
+the `MonetaContext.RoundingErrorDecimals` that is used by the `MonetaContext` to detect rounding errors. Therefore you should an adequate value depending by the precision required by your tasks, in particular by the `Currency`s involved.
 
-Every floating point operand involved in a monetary operation is rounded to the `MonetaContext.RoundingErrorDecimals`
-before the operation is performed. The result of the operation is then rounded to the `Currency` of the `Money` involved.
+> [!IMPORTANT]
+> `MonetaContext` will prevent you to create any `Money` that uses a `Currency` with a number of `DecimalPlaces` greather than the `RoundingErrorDecimals` value.
+
+> [!NOTE]
+> Using a `RoundingErrorDecimals` equals to the `Currency` with the highest number of `DecimalPlaces` involved in your tasks will prevent any rounding error to go noticed.
+
+Every result of an operation involving a floating point operand is rounded to the `MonetaContext.RoundingErrorDecimals`
+before the monetary value is computed.
+Thi value is then rounded accordingly to the decimals required by the `Currency` of the `Money` involved.
 The difference between the two values is the rounding error.
+ 
+Every safe operation will return a `decimal` value or, in the case of the [Split](#split-operation), a `Money` value representing the amount of value created or destroyed.
 
+If the error returned is positive, it means that the operation has lost some monetary value.
+On the other hand, if the error returned is negative, it means that the operation has created some monetary value.
+
+Schematically, let's assume that:
+* `OP` is the operation performed
+* `M` is the `Money` involved in the operation
+* `V` is the value (`decimal`, `double` or `float`) involved in the operation
+* `R` is the `Money` returned by the operation
+* `E` is the `error` returned by the operation
+
+then the following equation holds:
+
+```
+M OP V = R + E
+```
 The 'error' returned by the safe operations is a `decimal` value that represents the amount of monetary value created
 or lost during the operation.
+
+> [!NOTE]
+> `error` is positive in case of monetary value lost and negative in case of monetary value created.
+
+>  [!IMPORTANT]
+> `error` is always a `decimal` value with `MonetaContext.RoundingErrorDecimals` decimals at most.
 
 For example, if you perform the operation `1.00 EUR + 0.1234` with rounding mode `ToZero` or `ToEven` you will get `1.12 EUR` with a rounding error of `0.0034`,
 which is the amount of monetary value lost during the operation.
 But if you perform the same operation with rounding mode `ToPositiveInfinity` you will get `1.13 EUR` with a rounding error of `-0.0066`,
 which is the amount of monetary value created during the operation.
-
-In both cases, if you could operate in an infinite precision context, adding the error returned will restore the original monetary value.
 
 ### Moneta API Design
 

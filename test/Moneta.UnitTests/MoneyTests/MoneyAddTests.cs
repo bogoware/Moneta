@@ -2,21 +2,42 @@
 // ReSharper disable RedundantArgumentDefaultValue
 
 using Bogoware.Moneta.Exceptions;
+using static System.MidpointRounding;
 
 namespace Bogoware.Moneta.UnitTests.MoneyTests;
 
 public class MoneyAddTests : MoneyBaseTests
 {
 	[Fact]
-	public void Adding_money_cant_create_value()
+	public void Adding_cant_create_value()
 	{
+		// Arrange
+		var context = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
+		var sut = context.CreateMoney(1.00M);
+		var other = 0.001M;
 		
+		// Act
+		var result = sut.Add(other, out var error);
+		
+		// Arrange
+		result.Amount.Should().Be(1.01M);
+		error.Should().Be(-0.009M);
 	}
 	
 	[Fact]
-	public void Adding_numeric_cant_create_value()
+	public void Adding_cant_destroy_value()
 	{
+		// Arrange
+		var context = new MonetaContext(Euro, roundingMode: ToNegativeInfinity);
+		var sut = context.CreateMoney(1.00M);
+		var other = 0.001M;
 		
+		// Act
+		var result = sut.Add(other, out var error);
+		
+		// Arrange
+		result.Amount.Should().Be(1.00M);
+		error.Should().Be(0.001M);
 	}
 	
 	[Fact]

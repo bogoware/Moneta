@@ -12,7 +12,7 @@ public partial class Money
 		var decimalAmount = ValidateAndGetDecimalValue(amount);
 		var internalAmount = Round(Amount - decimalAmount, Context.RoundingErrorDecimals, rounding);
 		var newAmount = Round(internalAmount, Currency.DecimalPlaces, rounding);
-		error = newAmount - internalAmount;
+		error = internalAmount - newAmount;
 		return new(newAmount, Currency, Context);
 	}
 
