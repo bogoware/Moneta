@@ -101,7 +101,7 @@ of the original value $M$ and with $U$ the unallocated part, then the following 
 ```
 
 > [!NOTE]
-> `error` is positive in case of monetary value lost and negative in case of monetary value created.
+> $error$ and $U$ are positive in case of monetary value lost and negative in case of monetary value created.
  
 > [!NOTE]
 > The unallocated part $U$ of a `Split` operation can be positive or negative depending by the rounding algorithm.
