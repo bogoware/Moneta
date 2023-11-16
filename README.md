@@ -77,27 +77,28 @@ Unsafe operations, instead, will keep track of the operation and the error occur
 Schematically, let's assume that:
 * `•` is the operation performed
 * `M` is the `Money` involved in the operation
-* `value` is the value (`decimal`, `double` or `float`) involved in the operation
+* `V` is the value (`decimal`, `double` or `float`) involved in the operation
 * `R` is the `Money` returned by the operation
-* `error` is the `error` returned by the operation
+* `E` is the `error` returned by the operation
 
 then the following equation holds for the algebraic operations:
 
 ```
-M • value = R + error
+M • V = R + E
 ```
 
-More precisely:
-```math
+More precisely, if we indicate with $M$ the money value and with $value$ the value involved in the operation and $error$ the rounding error, then the following equation holds:
+
+$$
 \Big\| M \bullet  value \Big\|^{RoundingMode}_{RoundingErrorDecimals} = R+error
-```
+$$
 
-Similarly, in case of `Split`, if we indicate con $M_0$, … $M_{n-1}$ the $n$ parts
+Similarly, in case of `Split`, if we indicate with $M_0$, … $M_{n-1}$ the $n$ parts
 and with $U$ the unallocated part, then the following equation holds:
 
-```math
+$$
 \Big\| M \bullet  weights \Big\|^{RoundingMode}_{RoundingErrorDecimals} = M_0 + … + M_{n-1} + U
-```
+$$
 
 > [!NOTE]
 > `error` is positive in case of monetary value lost and negative in case of monetary value created.
