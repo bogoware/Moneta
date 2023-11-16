@@ -94,10 +94,10 @@ More precisely, if we indicate with $M$ the money value and with $value$ the val
 ```
 
 Similarly, in case of `Split`, if we indicate with $M_0$, … $M_{n-1}$ the $n$ parts
-and with $U$ the unallocated part, then the following equation holds:
+of the original value $M$ and with $U$ the unallocated part, then the following equation holds:
 
 ```math
-\Big\| M \bullet  weights \Big\|^{RoundingMode}_{RoundingErrorDecimals} = M_0 + … + M_{n-1} + U
+\sum_{i=0}^n M_i = M + U
 ```
 
 > [!NOTE]
