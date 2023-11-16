@@ -89,16 +89,16 @@ M • V = R + E
 
 More precisely, if we indicate with $M$ the money value and with $value$ the value involved in the operation and $error$ the rounding error, then the following equation holds:
 
-$$
+```math
 \Big\| M \bullet  value \Big\|^{RoundingMode}_{RoundingErrorDecimals} = R+error
-$$
+```
 
 Similarly, in case of `Split`, if we indicate with $M_0$, … $M_{n-1}$ the $n$ parts
 and with $U$ the unallocated part, then the following equation holds:
 
-$$
+```math
 \Big\| M \bullet  weights \Big\|^{RoundingMode}_{RoundingErrorDecimals} = M_0 + … + M_{n-1} + U
-$$
+```
 
 > [!NOTE]
 > `error` is positive in case of monetary value lost and negative in case of monetary value created.
