@@ -102,6 +102,9 @@ of the original value $M$ and with $U$ the unallocated part, then the following 
 
 > [!NOTE]
 > `error` is positive in case of monetary value lost and negative in case of monetary value created.
+ 
+> [!NOTE]
+> $U$ can be positive or negative depending by the rounding algorithm.
 
 >  [!IMPORTANT]
 > `error` is always a `decimal` value with `MonetaContext.RoundingErrorDecimals` decimals at most.
