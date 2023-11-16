@@ -58,7 +58,7 @@ There are basically two main causes of monetary value creation or loss:
 
 A *rounding error* occurs when an operation cannot be performed without losing precision.
 These errors are influenced not only by the *values* involved in the operation but also by the `RoundingMode` and
-the `MonetaContext.RoundingErrorDecimals` that is used by the `MonetaContext` to detect rounding errors. Therefore you should an adequate value depending by the precision required by your tasks, in particular by the `Currency`s involved.
+the `MonetaContext.RoundingErrorDecimals` that is used by the `MonetaContext` to detect rounding errors.
 
 > [!IMPORTANT]
 > `MonetaContext` will prevent you to create any `Money` that uses a `Currency` with a number of `DecimalPlaces` greather than the `RoundingErrorDecimals` value.
@@ -72,9 +72,7 @@ Thi value is then rounded accordingly to the decimals required by the `Currency`
 The difference between the two values is the rounding error.
  
 Every safe operation will return a `decimal` value or, in the case of the [Split](#split-operation), a `Money` value representing the amount of value created or destroyed.
-
-If the error returned is positive, it means that the operation has lost some monetary value.
-On the other hand, if the error returned is negative, it means that the operation has created some monetary value.
+Unsafe operations, instead, will keep track of the operation and the error occurred.
 
 Schematically, let's assume that:
 * `OP` is the operation performed
