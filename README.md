@@ -89,7 +89,7 @@ M • value = R + error
 
 More precisely:
 ```math
-\left\| M \bullet  value \right\|^{RoundingMode}_{RoundingErrorDecimals} = R+error
+\Big\| M \bullet  value \Big\|^{RoundingMode}_{RoundingErrorDecimals} = R+error
 ```
 
 
