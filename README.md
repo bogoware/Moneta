@@ -77,19 +77,19 @@ Unsafe operations, instead, will keep track of the operation and the error occur
 Schematically, let's assume that:
 * `•` is the operation performed
 * `M` is the `Money` involved in the operation
-* `V` is the value (`decimal`, `double` or `float`) involved in the operation
+* `value` is the value (`decimal`, `double` or `float`) involved in the operation
 * `R` is the `Money` returned by the operation
-* `E` is the `error` returned by the operation
+* `error` is the `error` returned by the operation
 
-then the following equation holds:
+then the following equation holds for the algebraic operations:
 
 ```
-M • V = R + E
+M • value = R + error
 ```
 
-More precisely, the following equation holds:
+More precisely:
 ```math
-\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+\left\| M \bullet  value \right\|^{RoundingMode}_{RoundingErrorDecimals} = R+error
 ```
 
 
