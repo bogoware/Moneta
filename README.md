@@ -87,6 +87,12 @@ then the following equation holds:
 M • V = R + E
 ```
 
+More precisely, the following equation holds:
+```math
+\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+```
+
+
 > [!NOTE]
 > `error` is positive in case of monetary value lost and negative in case of monetary value created.
 
@@ -110,15 +116,9 @@ For every supported operation, Moneta provides two set of overloads:
 
 The `error` or `unallocated` part returned by the safe overloads represents a quantity of the monetary value that has been created or lost during the operation.
 
-Adding that value to the result of the operation will restore the original monetary value.
-
-
-
-
-
 ### Money
 
-`Money` is Moneta's data type for representing monetary values. It consists of a `decimal` value associated with a `Currency`.
+`Money` is Moneta's type for representing monetary values. It consists of a `decimal` value associated with a `Currency`.
 
 The supported operations are:
 * `Split`: will split a `Money` into a list of `Money` instances according to the specified `RoundingMode` and number of parts or weights.
