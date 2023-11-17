@@ -6,19 +6,18 @@ namespace Bogoware.Moneta.UnitTests.CurrencyTests;
 public class CurrencyMostSpecificTests : CurrencyBaseTests
 {
 	[Fact]
-	public void Euro_and_Usd_are_not_comparable_therefore_mostSpecific_cannotBeInvoked()
+	public void Euro_and_Usd_are_not_comparable()
 	{
-		Eur.Invoking(eur => ICurrency.GetMostSpecificCurrency(eur, Usd, out _, out _))
+		ICurrency.AreCompatible(Eur, Usd).Should().BeFalse();
+		this.Invoking(_ => ICurrency.MustBeCompatible(Eur, Usd))
 			.Should().Throw<CurrencyIncompatibleException>();
 	}
-	
+
 	[Fact]
-	public void Euro_is_more_specific_than_undefined2digits()
+	public void AnyCurrency_isCompatible_withItself()
 	{
-		ICurrency.GetMostSpecificCurrency(Eur, Undefined, out var lessSpecific, out var mostSpecific);
-		
-		lessSpecific.Should().Be(Undefined);
-		mostSpecific.Should().Be(Eur);
+		ICurrency.AreCompatible(Eur, Eur).Should().BeTrue();
+		ICurrency.MustBeCompatible(Usd, Usd);
 	}
 	
 }

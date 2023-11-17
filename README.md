@@ -200,7 +200,7 @@ The Undefined Currency is a special currency identified by the ISO 4217 code `XX
 
 #### Currency Compatibility and Binary Operations
 
-Two `Currencies` are considered compatible if they share the same `Code` or if one of them is `UndefinedCurrency`.
+Two `Currencies` are considered compatible if they share the same `Code`.
 
 Binary operations between two `Money` instances are allowed only if their `Currencies` are compatible.
 

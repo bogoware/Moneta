@@ -11,14 +11,17 @@ public class MoneySubtractTests : MoneyBaseTests
 		// Arrange
 		var context = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
 		var sut = context.CreateMoney(0.99M);
-		var other = -0.001M;
+		const decimal other = -0.001M;
 		
 		// Act
 		var result = sut.Subtract(other, out var error);
 		
 		// Arrange
-		result.Amount.Should().Be(1.00M);
-		error.Should().Be(-0.009M);
+		var expectedResult = context.CreateMoney(1M);
+		const decimal expectedError = -0.009M;
+		
+		result.Should().Be(expectedResult);
+		error.Should().Be(expectedError);
 	}
 	
 	[Fact]
@@ -27,14 +30,17 @@ public class MoneySubtractTests : MoneyBaseTests
 		// Arrange
 		var context = new MonetaContext(Euro, roundingMode: ToNegativeInfinity);
 		var sut = context.CreateMoney(1.00M);
-		var other = -0.001M;
+		const decimal other = -0.001M;
 		
 		// Act
 		var result = sut.Subtract(other, out var error);
 		
 		// Arrange
-		result.Amount.Should().Be(1.00M);
-		error.Should().Be(0.001M);
+		var expectedResult = context.CreateMoney(1M);
+		const decimal expectedError = 0.001M;
+		
+		result.Should().Be(expectedResult);
+		error.Should().Be(expectedError);
 	}
 	
 	[Fact]
@@ -52,158 +58,50 @@ public class MoneySubtractTests : MoneyBaseTests
 	}
 	
 	[Fact]
-	public void Subtracting_compatibleMoneys_withError_isSafe()
+	public void Subtracting_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
+		var context = new MonetaContext(Euro);
 		var sut = context.CreateMoney(1.00M);
-		const double amount = 0.12345;
+		const double other = 0.12345;
 
 		// Act
-		var result = sut.Subtract(amount, out var error);
+		var result = sut.Subtract(other, out var error);
 
 		// Assert
-		result.Amount.Should().Be(0.88M);
-		error.Should().Be(0.00345M);
+		var expectedResult = context.CreateMoney(0.88M);
+		const decimal expectedError = -0.00345M;
+		
+		result.Should().Be(expectedResult);
+		error.Should().Be(expectedError);
 		context.HasRoundingErrors.Should().BeFalse();
 	}
 
 	[Fact]
-	public void Subtracting_compatibleMoneys_withoutError_isUnsafe()
+	public void Subtracting_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
+		var context = new MonetaContext(Euro);
 		var sut = context.CreateMoney(1.00M);
-		var amount = 0.12345;
+		const double amount = 0.12345;
 
 		// Act
 		var result = sut.Subtract(amount);
 
 		// Assert
-		result.Amount.Should().Be(0.88M);
+		var expectedResult = context.CreateMoney(0.88M);
+		const decimal expectedError = -0.00345M;
+		
+		result.Should().Be(expectedResult);
 		context.HasRoundingErrors.Should().BeTrue();
 		context.RoundingErrors.Should().HaveCount(1);
-		var error = context.RoundingErrors.First();
+		var error = context.RoundingErrors[0];
 		error.Should().BeOfType<SubtractOperation>();
-		error.Error.Should().Be(0.00345M);
+		error.Error.Should().Be(expectedError);
 	}
 
 	[Fact]
-	public void Subtracting_compatibleMoneys_withSameDecimals_withError_isSafe()
-	{
-		// Arrange
-		var context = new MonetaContext();
-		var sut = context.CreateMoney(1.00, Euro);
-		var other = context.CreateMoney(1.23, UndefinedCurrency.Instance);
-
-		// Act
-		var result = sut.Subtract(other, out var error);
-
-		// Assert
-		result.Amount.Should().Be(-0.23M);
-		result.Currency.Should().Be(Euro);
-		error.Should().Be(0.00M);
-		context.HasRoundingErrors.Should().BeFalse();
-	}
-
-	[Fact]
-	public void Subtract_compatibleMoneys_withSameDecimals_withoutError_isSafe()
-	{
-		// Arrange
-		var context = new MonetaContext();
-		var sut = context.CreateMoney(1.00, Euro);
-		var other = context.CreateMoney(1.23, UndefinedCurrency.Instance);
-
-		// Act
-		var result = sut.Subtract(other);
-
-		// Assert
-		result.Amount.Should().Be(-0.23M);
-		result.Currency.Should().Be(Euro);
-		context.HasRoundingErrors.Should().BeFalse();
-	}
-
-	[Fact]
-	public void Subtract_compatibleMoneys_withDifferentDecimals_withError_isSafe()
-	{
-		// Arrange
-		var context = new MonetaContext();
-		var sut = context.CreateMoney(1.00, Euro);
-		var other = context.CreateMoney(1.2345, UndefinedCurrency.Instance);
-
-		// Act
-		var result = sut.Subtract(other, out var error);
-
-		// Assert
-		result.Amount.Should().Be(-0.23M);
-		result.Currency.Should().Be(Euro);
-		context.HasRoundingErrors.Should().BeFalse();
-		error.Should().Be(0.0045M);
-	}
-
-	[Fact]
-	public void Adding_compatibleMoneys_withDifferentDecimals_withoutError_isUnsafe()
-	{
-		// Arrange
-		var context = new MonetaContext();
-		var sut = context.CreateMoney(1.00, Euro);
-		var other = context.CreateMoney(1.2345, UndefinedCurrency.Instance);
-
-		// Act
-		var result = sut.Add(other);
-
-		// Assert
-		result.Amount.Should().Be(2.23M);
-		result.Currency.Should().Be(Euro);
-		context.HasRoundingErrors.Should().BeTrue();
-
-		context.RoundingErrors.Should().HaveCount(1);
-		var errorRoundingOperation = context.RoundingErrors[0];
-		errorRoundingOperation.Should().BeOfType<AddOperation>();
-		errorRoundingOperation.As<AddOperation>().Error.Should().Be(0.0045M);
-	}
-	
-	
-	[Fact]
-	public void Adding_floatingPointNumber_withError_isSafe()
-	{
-		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
-		var sut = context.CreateMoney(1);
-		var amount = 0.12345;
-		
-		// Act
-		var result = sut.Add(amount, out var error);
-		
-		// Assert
-		var expected = context.CreateMoney(1.12M);
-		result.Should().Be(expected);
-		error.Should().Be(0.00345M);
-		context.HasRoundingErrors.Should().BeFalse();
-	}
-	
-	[Fact]
-	public void Adding_floatingPointNumber_withoutError_isUnsafe()
-	{
-		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
-		var sut = context.CreateMoney(1);
-		var amount = 0.12345;
-		
-		// Act
-		var result = sut.Add(amount);
-		
-		// Assert
-		var expected = context.CreateMoney(1.12M);
-		result.Should().Be(expected);
-		context.HasRoundingErrors.Should().BeTrue();
-		var error = context.RoundingErrors.First();
-		error.Should().BeOfType<AddOperation>();
-		error.Error.Should().Be(0.00345M);
-	}
-
-	[Fact]
-	public void PlusOperator_withIncompatibleMoneys_throwsException()
+	public void MinusOperator_withIncompatibleMoneys_throwsException()
 	{
 		// Arrange
 		var context = new MonetaContext();
@@ -215,23 +113,20 @@ public class MoneySubtractTests : MoneyBaseTests
 			.Should().Throw<CurrencyIncompatibleException>()
 			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}
-
+	
 	[Fact]
-	public void PlusOperator_withCompatibleMoneys_isUnsafe()
+	public void MinusOperator_api_coverage_test()
 	{
-		// Arrange
 		var context = new MonetaContext();
-		var money1 = context.CreateMoney(1.00, Euro);
-		var money2 = context.CreateMoney(1.2345, UndefinedCurrency.Instance);
+		var sut = context.CreateMoney(1);
+		var expected = context.CreateMoney(0);
 		
-		// Act
-		var result = money1 + money2;
-		
-		// Assert
-		result.Amount.Should().Be(2.23M);
-		context.HasRoundingErrors.Should().BeTrue();
-		var error = context.RoundingErrors.First();
-		error.Should().BeOfType<AddOperation>();
-		error.Error.Should().Be(0.0045M);
+		(sut - 1).Should().Be(expected);
+		(sut - 1M).Should().Be(expected);
+		(sut - 1L).Should().Be(expected);
+		(sut - 1U).Should().Be(expected);
+		(sut - 1UL).Should().Be(expected);
+		(sut - 1F).Should().Be(expected);
+		(sut - 1D).Should().Be(expected);
 	}
 }

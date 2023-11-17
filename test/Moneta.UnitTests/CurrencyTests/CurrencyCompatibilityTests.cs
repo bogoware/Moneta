@@ -22,13 +22,4 @@ public class CurrencyCompatibilityTests : CurrencyBaseTests
 		Eur.Invoking(x => ICurrency.MustBeCompatible(x, Eur))
 			.Should().NotThrow();
 	}
-
-	[Fact]
-	public void Euro_and_undefined2digits_are_compatible()
-	{
-		ICurrency.AreCompatible(Eur, Undefined).Should().BeTrue();
-
-		Eur.Invoking(x => ICurrency.MustBeCompatible(x, Undefined))
-			.Should().NotThrow();
-	}
 }

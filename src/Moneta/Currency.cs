@@ -26,14 +26,12 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 	public string Name { get; }
 	public string Symbol { get; }
 	public int DecimalPlaces { get; }
-	public bool IsNeutral { get; }
 
-	internal Currency(
+	protected Currency(
 		string code,
 		string name,
 		string symbol,
-		int decimalPlaces,
-		bool isNeutral)
+		int decimalPlaces)
 	{
 		ArgumentOutOfRangeException.ThrowIfNegative(decimalPlaces);
 		ArgumentOutOfRangeException.ThrowIfGreaterThan(decimalPlaces, 28);
@@ -42,23 +40,6 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 		Name = name;
 		DecimalPlaces = decimalPlaces;
 		Symbol = symbol;
-		IsNeutral = isNeutral;
-	}
-
-	/// <summary>
-	/// Initialize a new <see cref="Currency"/>.
-	/// </summary>
-	/// <param name="code">Should be the ISO 4217 currency code. No constraints applied</param>
-	/// <param name="name">The international name of the currency.</param>
-	/// <param name="symbol">The international symbol of the currency.</param>
-	/// <param name="decimalPlaces">The number of decimal places used by the currency.</param>
-	protected Currency(
-		string code,
-		string name,
-		string symbol,
-		int decimalPlaces)
-		: this(code, name, symbol, decimalPlaces, false)
-	{
 	}
 
 	public bool Equals(T? other)
@@ -93,7 +74,7 @@ public sealed class UndefinedCurrency : Currency<UndefinedCurrency>
 	/// Instantiate a new <see cref="UndefinedCurrency"/> with the specified number of decimal places.
 	/// </summary>
 	private UndefinedCurrency()
-		: base("XXX", "No Currency", "¤", DECIMAL_PLACES,  true)
+		: base("XXX", "No Currency", "¤", DECIMAL_PLACES)
 	{
 	}
 }

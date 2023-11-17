@@ -1,10 +1,93 @@
+using static System.MidpointRounding;
+
 namespace Bogoware.Moneta.UnitTests.MoneyTests;
 
-public class MoneySplitTests
+public class MoneySplitTests: MoneyBaseTests
 {
+	[Fact]
+	public void Splitting_byNumberOfParts_cant_create_value()
+	{
+		// Arrange
+		var moneyContext = new MonetaContext(Euro, roundingMode: ToEven);
+		const decimal initialAmount = 10M;
+		var sut = moneyContext.CreateMoney(initialAmount);
+
+		// Act
+		var parts = sut.Split(3, rounding: ToPositiveInfinity, out var unallocated);
+
+		// Assert
+		parts.Should().HaveCount(3);
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(3.34M));
+		unallocated.Amount.Should().Be(-0.02M);
+		var totalAmount = parts.Sum(x => x.Amount);
+		(totalAmount + unallocated.Amount).Should().Be(initialAmount);
+	}
+	
+	[Fact]
+	public void Splitting_byNumberOfParts_cant_destroy_value()
+	{
+		// Arrange
+		var moneyContext = new MonetaContext(Euro, roundingMode: ToEven);
+		const decimal initialAmount = 10.01M;
+		var sut = moneyContext.CreateMoney(initialAmount);
+
+		// Act
+		var parts = sut.Split(100, out var unallocated);
+
+		// Assert
+		parts.Should().HaveCount(100);
+		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(0.10M));
+		unallocated.Amount.Should().Be(0.01M);
+		var totalAmount = parts.Sum(x => x.Amount);
+		(totalAmount + unallocated.Amount).Should().Be(initialAmount);		
+	}
+	
+	[Fact]
+	public void Splitting_byWeights_cant_create_value()
+	{
+		// Arrange
+		var moneyContext = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
+		const decimal initialAmount = 1M;
+		var weights = new[] { 1, 1, 1 };
+		var sut = moneyContext.CreateMoney(initialAmount);
+		
+		// Act
+		var allocated = sut.Split(weights, out var unallocated);
+		
+		// Assert
+		var expectedAllocated = moneyContext.CreateMoney(0.34M);
+		var expectedUnallocated = moneyContext.CreateMoney(-0.02M);
+		allocated.Should().HaveCount(3);
+		allocated.Should().AllBeEquivalentTo(expectedAllocated);
+		unallocated.Should().BeEquivalentTo(expectedUnallocated);
+		(allocated.Sum(x => x.Amount) + unallocated.Amount).Should().Be(initialAmount);
+	}
+	
+	[Fact]
+	public void Splitting_byWeights_cant_destroy_value()
+	{
+		// Arrange
+		var moneyContext = new MonetaContext(Euro, roundingMode: ToZero);
+		const decimal initialAmount = 1M;
+		var weights = new[] { 1, 1, 1 };
+		var sut = moneyContext.CreateMoney(initialAmount);
+		
+		// Act
+		var allocated = sut.Split(weights, out var unallocated);
+		
+		// Assert
+		var expectedAllocated = moneyContext.CreateMoney(0.33M);
+		var expectedUnallocated = moneyContext.CreateMoney(0.01M);
+		
+		allocated.Should().HaveCount(3);
+		allocated.Should().AllBeEquivalentTo(expectedAllocated);
+		unallocated.Should().BeEquivalentTo(expectedUnallocated);
+		(allocated.Sum(x => x.Amount) + unallocated.Amount).Should().Be(initialAmount);
+	}
+	
 	[Theory]
 	[MemberData(nameof(GetSplitByPartsData))]
-	public void Money_splitByNumberOfParts_works(
+	public void Splitting_byNumberOfParts_worksWithError(
 		MidpointRounding roundingMode,
 		decimal amount,
 		int numberOfParts,
@@ -25,11 +108,11 @@ public class MoneySplitTests
 		parts.Should().HaveCount(numberOfParts);
 		parts.Should().AllBeEquivalentTo(expectedPart);
 		unallocated.Amount.Should().Be(expectedResidueAmount);
-		(totalAmount + unallocated).Amount.Should().Be(amount);
+		(totalAmount + unallocated.Amount).Should().Be(amount);
 	}
 
 	[Fact]
-	public void Money_splitByNumberOfParts_worksWithPerfectSplit()
+	public void Splitting_byNumberOfParts_worksWithPerfectSplit()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -42,28 +125,11 @@ public class MoneySplitTests
 		// Assert
 		parts.Should().HaveCount(100);
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByNumberOfParts_worksWithResidue()
-	{
-		// Arrange
-		var moneyContext = new MonetaContext();
-		var sut = moneyContext.CreateMoney(10.0001M);
-
-		// Act
-		var parts = sut.Split(100, out var unallocated);
-		var totalAmount = parts.Sum(x => x.Amount);
-
-		// Assert
-		parts.Should().HaveCount(100);
-		unallocated.Amount.Should().Be(0.0001M);
-		(totalAmount + unallocated).Amount.Should().Be(10.0001M);
-	}
-
-	[Fact]
-	public void Money_splitByIntWeights_worksWithPerfectSplit_01()
+	public void Splitting_byIntWeights_worksWithPerfectSplit_01()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -77,11 +143,11 @@ public class MoneySplitTests
 		parts.Should().HaveCount(10);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1M));
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByIntWeights_worksWithPerfectSplit_02()
+	public void Splitting_byIntWeights_worksWithPerfectSplit_02()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -101,11 +167,11 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(2M)
 		});
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByIntWeights_worksWithPerfectSplit_03()
+	public void Splitting_byIntWeights_worksWithPerfectSplit_03()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -125,11 +191,11 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(1.6667M)
 		});
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByIntWeights_worksWithResidue_01()
+	public void Splitting_byIntWeights_worksWithResidue_01()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -143,11 +209,11 @@ public class MoneySplitTests
 		parts.Should().HaveCount(10);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(1.00M));
 		unallocated.Amount.Should().Be(0.0001M);
-		(totalAmount + unallocated).Amount.Should().Be(10.0001M);
+		(totalAmount + unallocated.Amount).Should().Be(10.0001M);
 	}
 
 	[Fact]
-	public void Money_splitByIntWeights_worksWithResidue_02()
+	public void Splitting_byIntWeights_worksWithResidue_02()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -167,11 +233,11 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(0.5350M)  //  13 / (177 + 53 + 13) * 10 rounded to 2 decimal places
 		});
 		unallocated.Amount.Should().Be(-0.0001M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByFloatWeights_worksWithPerfectSplit_01()
+	public void Splitting_byFloatWeights_worksWithPerfectSplit_01()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -186,11 +252,11 @@ public class MoneySplitTests
 		parts.Should().HaveCount(2);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5M));
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 	
 	[Fact]
-	public void Money_splitByFloatWeights_worksWithPerfectSplit_02()
+	public void Splitting_byFloatWeights_worksWithPerfectSplit_02()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -210,11 +276,11 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(3.8889M)  // 1.75 / (1.25 + 1.50 + 1.75) * 10 rounded to 2 decimal places
 		});
 		unallocated.Amount.Should().Be(0M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
 
 	[Fact]
-	public void Money_splitByFloatWeights_worksWithResidue_01()
+	public void Splitting_bByFloatWeights_worksWithResidue_01()
 	{
 		// Arrange
 		var moneyContext = new MonetaContext();
@@ -229,14 +295,14 @@ public class MoneySplitTests
 		parts.Should().HaveCount(2);
 		parts.Should().AllBeEquivalentTo(moneyContext.CreateMoney(5.00M));
 		unallocated.Amount.Should().Be(0.0001M);
-		(totalAmount + unallocated).Amount.Should().Be(10.0001M);
+		(totalAmount + unallocated.Amount).Should().Be(10.0001M);
 	}
 
 	[Fact]
-	public void Money_splitByFloatWeights_worksWithResidue_02()
+	public void Splitting_byFloatWeights_worksWithResidue_02()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(roundingMode: MidpointRounding.ToZero);
+		var moneyContext = new MonetaContext(roundingMode: ToZero);
 		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act
@@ -253,16 +319,14 @@ public class MoneySplitTests
 			moneyContext.CreateMoney(4.1666M)  // 1.6666 / (1 + 1.3333 + 1.6666) * 10 rounded to 2 decimal places
 		});
 		unallocated.Amount.Should().Be(0.0001M);
-		(totalAmount + unallocated).Amount.Should().Be(10M);
+		(totalAmount + unallocated.Amount).Should().Be(10M);
 	}
-
-
 
 	public static IEnumerable<object[]> GetSplitByPartsData()
 	{
-		yield return new object[] { MidpointRounding.ToEven, 1.1234M, 2, 0.5617M, 0.0000M };
-		yield return new object[] { MidpointRounding.ToEven, 1.1111M, 2, 0.5556M, -0.0001M };
-		yield return new object[] { MidpointRounding.ToZero, 1.1977M, 2, 0.5988M, 0.0001M };
-		yield return new object[] { MidpointRounding.ToPositiveInfinity, 1.1197M, 2, 0.5599M, -0.0001M };
+		yield return new object[] { ToEven, 1.1234M, 2, 0.5617M, 0.0000M };
+		yield return new object[] { ToEven, 1.1111M, 2, 0.5556M, -0.0001M };
+		yield return new object[] { ToZero, 1.1977M, 2, 0.5988M, 0.0001M };
+		yield return new object[] { ToPositiveInfinity, 1.1197M, 2, 0.5599M, -0.0001M };
 	}
 }

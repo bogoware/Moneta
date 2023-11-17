@@ -79,13 +79,4 @@ public partial class Money
 	public static Money operator +(Money left, ushort right) => left.Add(right);
 	public static Money operator +(Money left, double right) => left.Add(right);
 	public static Money operator +(Money left, float right) => left.Add(right);
-	public static Money operator +(decimal left, Money right) => right.Add(left);
-	public static Money operator +(long left, Money right) => right.Add(left);
-	public static Money operator +(int left, Money right) => right.Add(left);
-	public static Money operator +(short left, Money right) => right.Add(left);
-	public static Money operator +(ulong left, Money right) => right.Add(left);
-	public static Money operator +(uint left, Money right) => right.Add(left);
-	public static Money operator +(ushort left, Money right) => right.Add(left);
-	public static Money operator +(double left, Money right) => right.Add(left);
-	public static Money operator +(float left, Money right) => right.Add(left);
 }

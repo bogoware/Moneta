@@ -1,7 +1,4 @@
 ﻿// ReSharper disable SuggestVarOrType_BuiltInTypes
-
-
-
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace Bogoware.Moneta;

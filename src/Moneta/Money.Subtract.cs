@@ -24,14 +24,9 @@ public partial class Money
 	/// <exception cref="CurrencyIncompatibleException">Thrown when the two currencies are not compatible.</exception>
 	public Money Subtract(Money other, MidpointRounding rounding, out decimal error)
 	{
-		ICurrency.GetMostSpecificCurrency(Currency, other.Currency, out var lessSpecificCurrency,
-			out var mostSpecificCurrency);
+		ICurrency.MustBeCompatible(Currency, other.Currency);
 		
-		var internalAmount = mostSpecificCurrency.DecimalPlaces < lessSpecificCurrency.DecimalPlaces
-			? Round(Amount + other.Amount, Context.RoundingErrorDecimals, rounding)
-			: other.Amount;
-		
-		return Add(internalAmount, rounding, out error);
+		return Add(other.Amount, rounding, out error);
 	}
 
 	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Subtract(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
@@ -78,14 +73,4 @@ public partial class Money
 	public static Money operator -(Money left, ushort right) => left.Subtract(right);
 	public static Money operator -(Money left, double right) => left.Subtract(right);
 	public static Money operator -(Money left, float right) => left.Subtract(right);
-	public static Money operator -(decimal left, Money right) => right.Subtract(left);
-	public static Money operator -(long left, Money right) => right.Subtract(left);
-	public static Money operator -(int left, Money right) => right.Subtract(left);
-	public static Money operator -(short left, Money right) => right.Subtract(left);
-	public static Money operator -(ulong left, Money right) => right.Subtract(left);
-	public static Money operator -(uint left, Money right) => right.Subtract(left);
-	public static Money operator -(ushort left, Money right) => right.Subtract(left);
-	public static Money operator -(double left, Money right) => right.Subtract(left);
-	public static Money operator -(float left, Money right) => right.Subtract(left);
-
 }
