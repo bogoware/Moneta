@@ -2,7 +2,7 @@ using Bogoware.Moneta.Abstractions;
 using Bogoware.Moneta.CurrencyProviders;
 using Bogoware.Moneta.Exceptions;
 
-namespace Bogoware.Moneta.UnitTests.MonetaryContextTests;
+namespace Bogoware.Moneta.UnitTests.MonetaContextTests;
 
 public class MonetaContextCtorTests
 {

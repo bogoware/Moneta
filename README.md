@@ -180,6 +180,7 @@ Operation | Safe | Unsafe | Notes
 --- |----|-----| ---
 `MonetaContext.Create` | Yes | Yes | Allocate a new `Money`.
 `Split` | Yes | Yes | Split the value of a `Money` into a list of `Money` instances. There are two overloads: one that takes the number of parts and one that takes a list of weights. Split methods, instead of the rounding error, will return the more significative unallocated part as `Money`.
+`RoundOff` | Yes | Yes | Round off the value of a `Money` to the monetary unit chosen.
 `Apply` | Yes | Yes | Apply a function to the `Money`
 `Map` | No | Yes | Similaer to `Aplply` but it doesn't return the rounding error. Suitable for functional style programming.
 `Add` | Yes | Yes | Adds a numeric value or a compatible `Money`
@@ -304,4 +305,24 @@ The original amount is EUR 11.11
 The allocated amounts are: EUR 3.70, EUR 3.70, EUR 3.70
 The unallocated amount is EUR 0.01
 
+```
+
+### Sample 5: Round-Off Cash to 0.05 EUR (Cash rounding)
+    
+```csharp
+using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+{
+Console.WriteLine("\nSample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)");
+var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
+
+	var total = amounts.Aggregate((x, y) => x + y);  // sum up all the amounts
+	var cashUnit = context.CreateMoney(0.05); // define the cash unit
+	// round off the total to the highest multiple of the cash unit that is less than or equal to the total
+	// a kindness to our customers that always save some pennies :)
+	var cashTotal = total.RoundOff(cashUnit, MidpointRounding.ToZero, out var unallocated);
+
+	Console.WriteLine($"The original total amount is {total}");
+	Console.WriteLine($"The cash total amount is {cashTotal}");
+	Console.WriteLine($"The discounted amount is {unallocated}");
+} // OK!
 ```

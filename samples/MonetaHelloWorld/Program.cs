@@ -71,3 +71,20 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 	Console.WriteLine($"The allocated amounts are: {string.Join(", ", split)}");
 	Console.WriteLine($"The unallocated amount is {unallocated}");
 } // OK!
+
+// Sample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)
+using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+{
+	Console.WriteLine("\nSample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)");
+	var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
+
+	var total = amounts.Aggregate((x, y) => x + y);  // sum up all the amounts
+	var cashUnit = context.CreateMoney(0.05); // define the cash unit
+	// round off the total to the highest multiple of the cash unit that is less than or equal to the total
+	// a kindness to our customers that always save some pennies :)
+	var cashTotal = total.RoundOff(cashUnit, MidpointRounding.ToZero, out var unallocated);
+
+	Console.WriteLine($"The original total amount is {total}");
+	Console.WriteLine($"The cash total amount is {cashTotal}");
+	Console.WriteLine($"The discounted amount is {unallocated}");
+} // OK!

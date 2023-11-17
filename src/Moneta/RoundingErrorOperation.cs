@@ -15,3 +15,4 @@ public sealed record MultiplyOperation(decimal Error, ICurrency Currency) : Roun
 public sealed record AddOperation(decimal Error, ICurrency Currency) : RoundingErrorOperation(Error, Currency);
 public sealed record SubtractOperation(decimal Error, ICurrency Currency) : RoundingErrorOperation(Error, Currency);
 public sealed record MapOperation(decimal Error, ICurrency Currency) : RoundingErrorOperation(Error, Currency);
+public sealed record RoundOffOperation(Money Unallocated) : RoundingErrorOperation(Unallocated.Amount, Unallocated.Currency);
