@@ -10,6 +10,7 @@ Moneta is a library designed to support monetary calculations in a secure manner
 * [Money](#money)
 * [Supported Operations](#supported-operations)
   * [Split](#split)
+  * [RoundOff](#roundoff)
   * [Apply](#apply)
   * [Map](#map): suitable for functional style programming
   * [Bind](#bind): suitable for functional style programming
