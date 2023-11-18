@@ -41,18 +41,18 @@ A `MonetaContext` defines the following:
 * The default `ICurrency` for creating new `Money` instances. For example, if you exclusively deal with EUR, you can set EUR as the default currency, making the creation of new `Money` instances more straightforward.
 * The `ICurrencyProvider` used to resolve currencies by code, enabling you to resolve currencies from a database or a web service.
 * The default `RoundingMode` for monetary operations.
-* The decimal precision used to detect rounding errors (see `RoundingErrorDecimals`). By default, all internal operations are rounded to 8 decimal places, but you can change this value up to 28 decimal places. For instance, this is useful for operations involving cryptocurrencies, which often have many decimal places.
-* A log of operations that have resulted in rounding errors (according to the `RoundingErrorDecimals` value).
+* The decimal precision used to detect rounding errors (see `RoundingErrorDecimals`). By default, all internal operations are rounded to 8 decimal places, but you can change this value up to 28 decimal places.
+* A log of operations that have resulted in unnoticed rounding errors (according to the `RoundingErrorDecimals` value).
 
-### The Principle of Monetary Value Conservation
+### The Monetary Value Conservation Principle
 
-In Moneta holds the «Monetary Value Conservation Principle»: no monetary value is created or lost during the lifetime of a `MonetaContext`.
+In Moneta holds the «Monetary Value Conservation Principle»: no monetary value is created or lost *unnoticed* during the lifetime of a `MonetaContext`.
 
 Moneta will provide means to keep track of any monetary value created or lost during the lifetime of a `MonetaContext`
 and make it available to the user who can decide how to handle it.
 
 There are basically two main causes of monetary value creation or loss:
-* Split Operations: which can produce an unallocated part, both positive or negative depending by the `RoundingMode` used.
+* Split or RoundOff Operations: which can produce an unallocated part, both positive or negative depending by the `RoundingMode` used.
 * Floating Point Operations with floating point numbers more precise than the `Currency` of the `Money` involved in the operation.
 
 #### Rounding Error Detection
@@ -65,15 +65,15 @@ the `MonetaContext.RoundingErrorDecimals` that is used by the `MonetaContext` to
 > `MonetaContext` will prevent you to create any `Money` that uses a `Currency` with a number of `DecimalPlaces` greather than the `RoundingErrorDecimals` value.
 
 > [!NOTE]
-> Using a `RoundingErrorDecimals` equals to the `Currency` with the highest number of `DecimalPlaces` involved in your tasks will prevent any rounding error to go noticed.
+> Using a `RoundingErrorDecimals` equals to the `Currency` with the highest number of `DecimalPlaces` involved in your calculus will prevent any rounding error to get noticed.
 
 Every result of an operation involving a floating point operand is rounded to the `MonetaContext.RoundingErrorDecimals`
 before the monetary value is computed.
 Thi value is then rounded accordingly to the decimals required by the `Currency` of the `Money` involved.
 The difference between the two values is the rounding error.
  
-Every safe operation will return a `decimal` value or, in the case of the [Split](#split-operation), a `Money` value representing the amount of value created or destroyed.
-Unsafe operations, instead, will keep track of the operation and the error occurred.
+Every safe operation will return a `decimal` error value or, in the case of the [Split](#split-operation) and [RoundOff](#roundoff-operation), a `Money` value representing the amount of value unallocated.
+Unsafe operations, instead, will keep track of the operations and the errors occurred.
 
 Schematically, let's assume that:
 * `•` is the operation performed
