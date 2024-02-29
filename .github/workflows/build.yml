@@ -3,11 +3,8 @@
 
 name: Build Core
 
-on:
-  push:
-    branches: [ "rel/prod" ]
-  pull_request:
-    branches: [ "rel/prod" ]
+on: 
+  workflow_dispatch:
 
 jobs:
   build:
