@@ -9,6 +9,9 @@ on:
   pull_request:
     branches:
       - "**"
+        
+env:
+  VERSION: 0.0.0.build # Default version to run simple build and test 
 
 jobs:
   build:
