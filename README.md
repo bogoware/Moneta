@@ -1,5 +1,7 @@
 # Moneta
 
+![Nuget](https://img.shields.io/nuget/dt/Bogoware.Moneta?logo=nuget&style=plastic) ![Nuget](https://img.shields.io/nuget/v/Bogoware.Moneta?style=plastic)
+
 Moneta is a library designed to support monetary calculations in a secure manner.
 
 ### Summary
