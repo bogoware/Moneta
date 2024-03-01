@@ -7,5 +7,28 @@
         <AssemblyName>Bogoware.Moneta</AssemblyName>
         <RootNamespace>Bogoware.Moneta</RootNamespace>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <PackageId>Bogoware.Moneta</PackageId>
+        <!-- <Version>0.0.1</Version> -->
+        <!-- <GeneratePackageOnBuild>true</GeneratePackageOnBuild> -->
+        <Authors>Giovanni Costagliola</Authors>
+        <Company>Bogoware</Company>
+        <Product>Moneta</Product>
+        <Copyright>Copyright © Giovanni Costagliola 2024</Copyright>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Title>Bogoware Moneta</Title>
+        <Description>Library for secure monetary calculations.</Description>
+        <Summary>Moneta is a library designed for secure monetary calculations. It offers a robust API that ensures accuracy and consistency in financial operations while preventing unnoticed rounding errors. </Summary>
+        <PackageTags>Financial Money Currency Banking Finance Accounting</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- <PackageIcon>packageIcon.png</PackageIcon> -->
+        <!-- <PackageIconUrl></PackageIconUrl> -->
+        <!-- <PackageProjectUrl>https://mr.bogoware.io/projects/2023/monads</PackageProjectUrl> -->
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryUrl>https://github.com/bogoware/moneta</RepositoryUrl>
+        <RepositoryType>github</RepositoryType>
+    </PropertyGroup>
 
 </Project>
