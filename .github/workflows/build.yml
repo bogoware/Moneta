@@ -32,8 +32,8 @@ jobs:
       run: dotnet build --no-restore /p:Version=$VERSION
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Pack Nuget packages
-      run: dotnet pack --output nupkgs --no-restore --no-build /p:PackageVersion=$VERSION
+    - name: Pack Moneta Core
+      run: dotnet pack src/Moneta --output nupkgs --no-restore --no-build /p:PackageVersion=$VERSION
     - name: Upload nuget packages
       if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
