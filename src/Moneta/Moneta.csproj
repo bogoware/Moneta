@@ -30,9 +30,4 @@
         <RepositoryUrl>https://github.com/bogoware/moneta</RepositoryUrl>
         <RepositoryType>github</RepositoryType>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="" />
-    </ItemGroup>
-
 </Project>
