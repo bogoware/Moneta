@@ -11,7 +11,7 @@ on:
       - "**"
         
 env:
-  VERSION: 0.0.0.build # Default version to run simple build and test 
+  VERSION: 0.0.0.0-build # Default version to run simple build and test 
 
 jobs:
   build:
