@@ -32,7 +32,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --release --no-restore /p:Version=$VERSION
+      run: dotnet build -c Release --no-restore /p:Version=$VERSION
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack Moneta Core
