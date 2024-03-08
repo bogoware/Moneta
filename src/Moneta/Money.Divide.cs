@@ -42,6 +42,18 @@ public partial class Money
 
 	/// <inheritdoc cref="Divide(decimal,out Bogoware.Money.Money)"/>
 	public Money Divide(double divisor, out decimal error) => Divide(divisor, Context.RoundingMode, out error);
+
+	/// <summary>
+	/// Calculate the quotient of the two <see cref="Money"/> instances.
+	/// </summary>
+	/// <param name="other"></param>
+	/// <returns></returns>
+	public decimal Divide(Money other)
+	{
+		ArgumentNullException.ThrowIfNull(other);
+		ICurrency.MustBeCompatible(Currency, other.Currency);
+		return Amount / other.Amount;
+	}
 	
 	public static Money operator /(Money left, decimal right)
 	{
@@ -50,5 +62,6 @@ public partial class Money
 		left.Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return returnValue;
 	}
-
+	
+	public static decimal operator /(Money left, Money right) => left.Divide(right);
 }

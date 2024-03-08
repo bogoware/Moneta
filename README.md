@@ -189,7 +189,7 @@ Operation | Safe | Unsafe | Notes
 `Add` | Yes | Yes | Adds a numeric value or a compatible `Money`
 `Subtract` | Yes | Yes | Subtracts a numeric value or a compatible `Money`
 `Multiply` | Yes | Yes | Multiplies for a numeric value
-`Divide`| Yes | Yes | Divides by a numeric value
+`Divide`| Yes | Yes | Divides by a numeric value or another `Money`
 `Negate` | Yes | No  | Negates the `Money` amount
 +, -, *, / with floating point numbers| No | Yes | The arithmetic operators. Binary operators between a `Money` value and a floating point number are unsafe operations.
 +, - with `Money` values with the same `Currency` or integral numbers or between any kind of `UndefinedCurrency` | Yes | No  | Binary operators between `Money` values with the same `Currency` or integral numbers are safe operations

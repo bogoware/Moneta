@@ -1,3 +1,4 @@
+using Bogoware.Moneta.CurrencyProviders;
 using Bogoware.Moneta.Exceptions;
 using static System.MidpointRounding;
 
@@ -12,18 +13,18 @@ public class MoneySubtractTests : MoneyBaseTests
 		var context = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
 		var sut = context.CreateMoney(0.99M);
 		const decimal other = -0.001M;
-		
+
 		// Act
 		var result = sut.Subtract(other, out var error);
-		
+
 		// Arrange
 		var expectedResult = context.CreateMoney(1M);
 		const decimal expectedError = -0.009M;
-		
+
 		result.Should().Be(expectedResult);
 		error.Should().Be(expectedError);
 	}
-	
+
 	[Fact]
 	public void Subtracting_cant_destroy_value()
 	{
@@ -31,18 +32,18 @@ public class MoneySubtractTests : MoneyBaseTests
 		var context = new MonetaContext(Euro, roundingMode: ToNegativeInfinity);
 		var sut = context.CreateMoney(1.00M);
 		const decimal other = -0.001M;
-		
+
 		// Act
 		var result = sut.Subtract(other, out var error);
-		
+
 		// Arrange
 		var expectedResult = context.CreateMoney(1M);
 		const decimal expectedError = 0.001M;
-		
+
 		result.Should().Be(expectedResult);
 		error.Should().Be(expectedError);
 	}
-	
+
 	[Fact]
 	public void Subtracting_incompatibleMoney_throwsException()
 	{
@@ -50,13 +51,13 @@ public class MoneySubtractTests : MoneyBaseTests
 		var context = new MonetaContext();
 		var sut = context.CreateMoney(1.00M, Euro);
 		var other = context.CreateMoney(1.00M, UsDollar);
-		
+
 		// Act and Assert
 		sut.Invoking(x => x.Subtract(other))
 			.Should().Throw<CurrencyIncompatibleException>()
 			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}
-	
+
 	[Fact]
 	public void Subtracting_withError_isSafe()
 	{
@@ -71,7 +72,7 @@ public class MoneySubtractTests : MoneyBaseTests
 		// Assert
 		var expectedResult = context.CreateMoney(0.88M);
 		const decimal expectedError = -0.00345M;
-		
+
 		result.Should().Be(expectedResult);
 		error.Should().Be(expectedError);
 		context.HasRoundingErrors.Should().BeFalse();
@@ -91,7 +92,7 @@ public class MoneySubtractTests : MoneyBaseTests
 		// Assert
 		var expectedResult = context.CreateMoney(0.88M);
 		const decimal expectedError = -0.00345M;
-		
+
 		result.Should().Be(expectedResult);
 		context.HasRoundingErrors.Should().BeTrue();
 		context.RoundingErrors.Should().HaveCount(1);
@@ -107,20 +108,20 @@ public class MoneySubtractTests : MoneyBaseTests
 		var context = new MonetaContext();
 		var money1 = context.CreateMoney(1.00, Euro);
 		var money2 = context.CreateMoney(1.00, UsDollar);
-		
+
 		// Act and Assert
 		money1.Invoking(x => x + money2)
 			.Should().Throw<CurrencyIncompatibleException>()
 			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}
-	
+
 	[Fact]
 	public void MinusOperator_api_coverage_test()
 	{
 		var context = new MonetaContext();
 		var sut = context.CreateMoney(1);
 		var expected = context.CreateMoney(0);
-		
+
 		(sut - 1).Should().Be(expected);
 		(sut - 1M).Should().Be(expected);
 		(sut - 1L).Should().Be(expected);
@@ -128,5 +129,19 @@ public class MoneySubtractTests : MoneyBaseTests
 		(sut - 1UL).Should().Be(expected);
 		(sut - 1F).Should().Be(expected);
 		(sut - 1D).Should().Be(expected);
+	}
+
+	[Fact]
+	public void MinusOperator_ByTwoEqualAmounts_GetZero()
+	{
+		using var context = new MonetaContext("EUR", new IsoCurrencyProvider());
+
+		var lhs = context.CreateMoney(1000);
+		var rhs = context.CreateMoney(1000);
+		var expected = context.CreateMoney(0);
+
+		var result = lhs - rhs;
+		
+		result.Should().Be(expected);
 	}
 }

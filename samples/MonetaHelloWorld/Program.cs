@@ -88,3 +88,15 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 	Console.WriteLine($"The cash total amount is {cashTotal}");
 	Console.WriteLine($"The discounted amount is {unallocated}");
 } // OK!
+
+// Sample 6: Calculating the P/E Ratio
+using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+{
+	Console.WriteLine("\nSample 6: Calculating the P/E Ratio");
+	var price = context.CreateMoney(100);
+	var earnings = context.CreateMoney(10);
+
+	var peRatio = price / earnings;
+
+	Console.WriteLine($"The P/E Ratio is {peRatio}");
+} // OK!

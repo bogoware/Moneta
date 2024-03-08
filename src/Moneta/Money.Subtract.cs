@@ -26,7 +26,7 @@ public partial class Money
 	{
 		ICurrency.MustBeCompatible(Currency, other.Currency);
 		
-		return Add(other.Amount, rounding, out error);
+		return Add(-other.Amount, rounding, out error);
 	}
 
 	/// <inheritdoc cref="M:Bogoware.Moneta.Money.Subtract(Bogoware.Moneta.Money,System.MidpointRounding,System.Decimal@)"/>
