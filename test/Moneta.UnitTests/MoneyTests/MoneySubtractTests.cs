@@ -97,7 +97,7 @@ public class MoneySubtractTests : MoneyBaseTests
 		context.HasRoundingErrors.Should().BeTrue();
 		context.RoundingErrors.Should().HaveCount(1);
 		var error = context.RoundingErrors[0];
-		error.Should().BeOfType<SubtractOperation>();
+		error.Should().BeOfType<SubtractOperationError>();
 		error.Error.Should().Be(expectedError);
 	}
 
@@ -110,7 +110,7 @@ public class MoneySubtractTests : MoneyBaseTests
 		var money2 = context.CreateMoney(1.00, UsDollar);
 
 		// Act and Assert
-		money1.Invoking(x => x + money2)
+		money1.Invoking(x => x - money2)
 			.Should().Throw<CurrencyIncompatibleException>()
 			.WithMessage("Currencies 'EUR' and 'USD' are not compatible.");
 	}

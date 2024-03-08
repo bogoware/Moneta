@@ -5,7 +5,7 @@ public partial class Money
 	/// <summary>
 	/// Divide the money into the specified number of parts.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaContext"/>.
+	/// and therefore does not add a <see cref="RoundingOperationError"/> to the <see cref="MonetaContext"/>.
 	/// </summary>
 	/// <param name="divisor">The divisor.</param>
 	/// <param name="rounding">The rounding mode to use.</param>
@@ -13,7 +13,7 @@ public partial class Money
 	/// <returns>The quotient.</returns>
 	public Money Divide(decimal divisor, MidpointRounding rounding, out decimal error)
 	{
-		ArgumentOutOfRangeException.ThrowIfNegativeOrZero(divisor);
+		ArgumentOutOfRangeException.ThrowIfZero(divisor);
 		decimal internalAmount = Math.Round(Amount / divisor, Context.RoundingErrorDecimals, rounding);
 		decimal newAmount = Math.Round(internalAmount, Currency.DecimalPlaces, rounding);
 		error = internalAmount - newAmount;
@@ -23,7 +23,7 @@ public partial class Money
 	/// <summary>
 	/// Divide the money into the specified number of parts using the <see cref="Context"/>'s rounding mode.
 	/// This operation assume that the caller will handle properly the residual part
-	/// and therefore does not add a <see cref="RoundingErrorOperation"/> to the <see cref="MonetaContext"/>. 
+	/// and therefore does not add a <see cref="RoundingOperationError"/> to the <see cref="MonetaContext"/>. 
 	/// </summary>
 	/// <param name="divisor">The divisor.</param>
 	/// <param name="error">The cumulative residual part after the division. This value can be positive or negative.</param>
@@ -58,7 +58,7 @@ public partial class Money
 	public static Money operator /(Money left, decimal right)
 	{
 		var returnValue = left.Divide(right, out var residue);
-		var errorRoundingOperation = new DivideOperation(residue, left.Currency);
+		var errorRoundingOperation = new DivideOperationError(residue, left.Currency);
 		left.Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return returnValue;
 	}

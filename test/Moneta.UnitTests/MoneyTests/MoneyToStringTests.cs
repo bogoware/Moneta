@@ -27,6 +27,6 @@ public class MoneyToStringTests: MoneyBaseTests
 		var result = sut.ToString();
 
 		// Assert
-		result.Should().Be("XXX 10.1001");
+		result.Should().Be("XXX 10.10");
 	}
 }

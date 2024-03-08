@@ -14,8 +14,6 @@ Moneta is a library designed to support monetary calculations in a secure manner
   * [Split](#split)
   * [RoundOff](#roundoff)
   * [Apply](#apply)
-  * [Map](#map): suitable for functional style programming
-  * [Bind](#bind): suitable for functional style programming
   * [Add](#add)
   * [Subtract](#subtract)
   * [Multiply](#multiply)
@@ -135,8 +133,7 @@ The `error` or `unallocated` part returned by the safe overloads represents a qu
 
 The supported operations are:
 * `Split`: will split a `Money` into a list of `Money` instances according to the specified `RoundingMode` and number of parts or weights.
-* `Apply`: will apply a function to the `Money` value and return a new `Money` instance with the same `Currency` and the rounding error of the operation.
-* `Map`: will apply a function to the `Money` value and return a new `Money` instance with the same `Currency`.
+* `Apply`: will apply a function to the `Money` value and return a new `Money` instance. There are many variants that accept different kind of functions suitable to transform the `Money` amount and/or the `Currency`.
 * `Add`, `Subtract`, `Multiply`, `Divide`: will perform the corresponding operation between two `Money` instances or a `Money` instance and a number, returning a new `Money` instance with the same `Currency`.
 * `Negate`: will negate the `Money` value and return a new `Money` instance with the same `Currency`.
 * `CompareTo`: will compare the `Money` value with another `Money` instance or a number. If the `Money` instances have different `Currencies`, and the `MonetaContext` has an `IExchangeRateProvider`, the `Money` instances will be converted to the same `Currency` before the comparison, otherwise an exception will be thrown.
@@ -185,7 +182,6 @@ Operation | Safe | Unsafe | Notes
 `Split` | Yes | Yes | Split the value of a `Money` into a list of `Money` instances. There are two overloads: one that takes the number of parts and one that takes a list of weights. Split methods, instead of the rounding error, will return the more significative unallocated part as `Money`.
 `RoundOff` | Yes | Yes | Round off the value of a `Money` to the monetary unit chosen.
 `Apply` | Yes | Yes | Apply a function to the `Money`
-`Map` | No | Yes | Similaer to `Aplply` but it doesn't return the rounding error. Suitable for functional style programming.
 `Add` | Yes | Yes | Adds a numeric value or a compatible `Money`
 `Subtract` | Yes | Yes | Subtracts a numeric value or a compatible `Money`
 `Multiply` | Yes | Yes | Multiplies for a numeric value

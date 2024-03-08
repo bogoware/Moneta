@@ -87,7 +87,7 @@ public class MoneyAddTests : MoneyBaseTests
 		context.HasRoundingErrors.Should().BeTrue();
 		context.RoundingErrors.Should().HaveCount(1);
 		var error = context.RoundingErrors.First();
-		error.Should().BeOfType<AddOperation>();
+		error.Should().BeOfType<AddOperationError>();
 		error.Error.Should().Be(0.00345M);
 	}
 	

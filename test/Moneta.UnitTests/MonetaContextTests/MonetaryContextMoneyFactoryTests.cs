@@ -23,14 +23,14 @@ public class MonetaryContextMoneyFactoryTests
 	{
 		// Arrange
 		var sut = new MonetaContext();
-		double originalValue = 1.12345;
+		double originalValue = 1.125;
 		
 		// Act
 		var money = sut.CreateMoney(originalValue, out var residue);
 		
 		// Assert
-		money.Amount.Should().Be(1.1234M);
-		residue.Should().Be(0.00005M);
+		money.Amount.Should().Be(1.12M);
+		residue.Should().Be(0.005M);
 		sut.HasRoundingErrors.Should().BeFalse();
 	}
 	
@@ -54,17 +54,17 @@ public class MonetaryContextMoneyFactoryTests
 	{
 		// Arrange
 		var sut = new MonetaContext();
-		double originalValue = 1.12345;
+		double originalValue = 1.125;
 		
 		// Act
 		var money = sut.CreateMoney(originalValue);
 		
 		// Assert
-		money.Amount.Should().Be(1.1234M);
+		money.Amount.Should().Be(1.12M);
 		sut.HasRoundingErrors.Should().BeTrue();
 		sut.RoundingErrors.Should().HaveCount(1);
 		var errorRoundingOperation = sut.RoundingErrors[0];
-		errorRoundingOperation.Should().BeOfType<CreateOperation>();
-		errorRoundingOperation.As<CreateOperation>().Error.Should().Be(0.00005M);
+		errorRoundingOperation.Should().BeOfType<CreateOperationError>();
+		errorRoundingOperation.As<CreateOperationError>().Error.Should().Be(0.005M);
 	}
 }

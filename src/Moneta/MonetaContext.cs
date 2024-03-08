@@ -38,12 +38,12 @@ public sealed class MonetaContext: IDisposable
 	/// </summary>
 	public int RoundingErrorDecimals { get; }
 
-	private List<RoundingErrorOperation> InternalRoundingErrors { get; }
+	private List<RoundingOperationError> InternalRoundingErrors { get; }
 
 	/// <summary>
 	/// The rounding errors occurred during operations performed without rounding error handling.
 	/// </summary>
-	public IReadOnlyList<RoundingErrorOperation> RoundingErrors => InternalRoundingErrors;
+	public IReadOnlyList<RoundingOperationError> RoundingErrors => InternalRoundingErrors;
 
 	/// <summary>
 	/// The context has rounding errors.
@@ -134,7 +134,7 @@ public sealed class MonetaContext: IDisposable
 		where T : INumber<T>, IConvertible
 	{
 		var result = CreateMoney(amount, currency, roundingMode, out var error);
-		var errorRoundingOperation = new CreateOperation(error, currency);
+		var errorRoundingOperation = new CreateOperationError(error, currency);
 		AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}
@@ -186,10 +186,10 @@ public sealed class MonetaContext: IDisposable
 	/// </summary>
 	public void ClearRoundingErrors() => InternalRoundingErrors.Clear();
 
-	internal void AddRoundingErrorOperation(RoundingErrorOperation roundingErrorOperation)
+	internal void AddRoundingErrorOperation(RoundingOperationError roundingOperationError)
 	{
-		if (roundingErrorOperation.Error == 0) return;
-		InternalRoundingErrors.Add(roundingErrorOperation);
+		if (roundingOperationError.Error == 0) return;
+		InternalRoundingErrors.Add(roundingOperationError);
 	}
 	
 	public void Dispose() => EnsureNoRoundingErrors();

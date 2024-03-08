@@ -5,8 +5,8 @@ namespace Bogoware.Moneta.Exceptions;
 /// </summary>
 public class MonetaryContextWithRoundingErrorsException : Exception
 {
-	public IReadOnlyList<RoundingErrorOperation> RoundingErrors { get; }
-	public MonetaryContextWithRoundingErrorsException(IEnumerable<RoundingErrorOperation> roundingErrors) : base()
+	public IReadOnlyList<RoundingOperationError> RoundingErrors { get; }
+	public MonetaryContextWithRoundingErrorsException(IEnumerable<RoundingOperationError> roundingErrors) : base()
 	{
 		RoundingErrors = roundingErrors.ToList();
 	}

@@ -36,7 +36,7 @@ public partial class Money
 	public Money Subtract(Money other)
 	{
 		var result = Subtract(other, Context.RoundingMode, out var error);
-		var roundingErrorOperation = new SubtractOperation(error, Currency);
+		var roundingErrorOperation = new SubtractOperationError(error, Currency);
 		Context.AddRoundingErrorOperation(roundingErrorOperation);
 		return result;
 	}
@@ -49,7 +49,7 @@ public partial class Money
 	public Money Subtract<T>(T amount, MidpointRounding rounding) where T : INumber<T>, IConvertible
 	{
 		var result = Subtract(amount, rounding, out var residue);
-		var errorRoundingOperation = new SubtractOperation(residue, Currency);
+		var errorRoundingOperation = new SubtractOperationError(residue, Currency);
 		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}
@@ -58,7 +58,7 @@ public partial class Money
 	public Money Subtract<T>(T amount) where T : INumber<T>, IConvertible
 	{
 		var result = Subtract(amount, Context.RoundingMode, out var residue);
-		var errorRoundingOperation = new SubtractOperation(residue, Currency);
+		var errorRoundingOperation = new SubtractOperationError(residue, Currency);
 		Context.AddRoundingErrorOperation(errorRoundingOperation);
 		return result;
 	}

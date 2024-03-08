@@ -36,7 +36,7 @@ public partial class Money
 	public Money RoundOff(Money roundOffUnit, MidpointRounding rounding)
 	{
 		var result = RoundOff(roundOffUnit, rounding, out var error);
-		var roundingErrorOperation = new RoundOffOperation(error);
+		var roundingErrorOperation = new RoundOffOperationError(error);
 		Context.AddRoundingErrorOperation(roundingErrorOperation);
 		return result;
 	}
@@ -49,7 +49,7 @@ public partial class Money
 	public Money RoundOff(Money roundOffUnit)
 	{
 		var result = RoundOff(roundOffUnit, Context.RoundingMode, out var error);
-		var roundingErrorOperation = new RoundOffOperation(error);
+		var roundingErrorOperation = new RoundOffOperationError(error);
 		Context.AddRoundingErrorOperation(roundingErrorOperation);
 		return result;
 	}

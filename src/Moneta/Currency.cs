@@ -66,7 +66,7 @@ public abstract class Currency<T> : ICurrency, IEquatable<T> where T: Currency<T
 /// </summary>
 public sealed class UndefinedCurrency : Currency<UndefinedCurrency>
 {
-	private const int DECIMAL_PLACES = 4;
+	private const int DECIMAL_PLACES = 2;
 	
 	public static readonly UndefinedCurrency Instance = new();
 	
