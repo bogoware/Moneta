@@ -42,10 +42,15 @@ public partial class Money
 	/// <inheritdoc cref="Multiply(decimal,out Bogoware.Money.Money)"/>
 	public Money Multiply(double multiplier, out decimal error) =>
 		Multiply(multiplier, Context.RoundingMode, out error);
-	
-	public static Money operator *(Money left, decimal right) => new(left.Amount * right, left.Currency, left.Context);
 
-	public static Money operator *(decimal left, Money right) =>
-		new(left * right.Amount, right.Currency, right.Context);
+	public static Money operator *(Money left, decimal right)
+	{
+		var returnValue = left.Multiply(right, out var error);
+		var roundingError = new MultiplyOperationError(error, left.Currency);
+		left.Context.AddRoundingErrorOperation(roundingError);
+		return returnValue;
+	}
+
+	public static Money operator *(decimal left, Money right) => right * left;
 
 }

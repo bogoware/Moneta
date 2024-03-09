@@ -4,6 +4,43 @@
 
 Moneta is a library designed to support monetary calculations in a secure manner.
 
+## TL;DR
+
+The following simple snippet demonstrates how Moneta can help you writing safe monetary code also in very simple scenarios.
+
+```csharp
+public static void BadCode()
+{
+    using var moneta = new MonetaContext();
+    var unitPrice = moneta.Dollar(1.12m);
+    var quantity = 12.43424m;
+    var finalPrice = unitPrice * quantity;
+    
+    Console.WriteLine($"Unit price: {unitPrice}");
+    Console.WriteLine($"Quantity: {quantity}");
+    Console.WriteLine($"Final price: {finalPrice}");
+    
+} // an exception will be thrown because rounding errors were unnoticed
+
+public static void GoodCode()
+{
+    using var moneta = new MonetaContext();
+    var unitPrice = moneta.Dollar(1.12m);
+    var quantity = 12.43424m;
+    var finalPrice = unitPrice * quantity;
+    
+    Console.WriteLine($"Unit price: {unitPrice}");
+    Console.WriteLine($"Quantity: {quantity}");
+    Console.WriteLine($"Final price: {finalPrice}");
+
+    if (moneta.HasRoundingErrors)
+    {
+        // Handle rounding errors as you prefer
+        moneta.ClearRoundingErrors();
+    }
+}
+```
+
 ### Summary
 
 * [Moneta Context](#moneta-context)

@@ -1,5 +1,6 @@
 ﻿using Bogoware.Moneta;
 using Bogoware.Moneta.CurrencyProviders;
+using MonetaHelloWorld;
 
 var currency = new Currency("BITCOIN", "Bitcoin", "B", 8);
 using (var context = new MonetaContext(currency))
