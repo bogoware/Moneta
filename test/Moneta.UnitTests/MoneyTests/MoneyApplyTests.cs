@@ -1,27 +1,10 @@
 using Bogoware.Moneta.Abstractions;
+using Bogoware.Moneta.CommonCurrencies;
 
 namespace Bogoware.Moneta.UnitTests.MoneyTests;
 
 public class MoneyApplyTests
 {
-	private class Euro: ICurrency
-	{
-		public string Code => "EUR";
-		public string Name => "Euro";
-		public string Symbol => "€";
-		public int DecimalPlaces => 2;
-		public static Euro Instance { get; } = new();
-	}
-
-	private class Dollar: ICurrency
-	{
-		public string Code => "USD";
-		public string Name => "Dollar";
-		public string Symbol => "$";
-		public int DecimalPlaces => 2;
-		public static Dollar Instance { get; } = new();
-	}
-
 	public static readonly Func<decimal, decimal> SafeDecimalTransformation = m => m * 2 + 0.23m;
 
 	public static readonly Func<decimal, decimal> UnsafeDecimalTransformation = m => (decimal)Math.Sin((double)m);

@@ -1,6 +1,6 @@
 namespace Bogoware.Moneta.UnitTests.MonetaContextTests;
 
-public class MonetaryContextMoneyFactoryTests
+public class MonetaContextMoneyFactoryTests
 {
 	[Fact]
 	public void CreateMoney_works_withNoResidual()

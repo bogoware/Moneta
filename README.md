@@ -156,6 +156,20 @@ Rounding errors in split operations occur when you attempt to divide a `Money` i
 
 Rounding errors in algebraic operations occur when you perform an operation between a `Money` and a floating point number with a decimal part that exceeds the decimal places supported by the target `Currency`. For instance, if you try to add 1.12345678 EUR to 1.12 EUR, the result will be 2.24 EUR with a rounding error of 0.00345678 EUR.
 
+#### Common Currencies
+The Moneta core is equipped with common currencies and provides extension methods to the `MonetaContext`. These methods aim to simplify the most common use cases, eliminating the need to inject an ICurrencyProvider.
+
+For example, if you operate with standard EUR and USD you can write something like this:
+
+```csharp
+using var moneta = new MonetaContext();
+var bucks = moneta.Dollars(100);
+var euros = moneta.Euros(100);
+var pounds = moneta.PoundingSterling(100);
+var yens = moneta.Yen(100);
+var yuans = moneta.Yuan(100);
+```
+
 ### Safe and Unsafe Operations
 
 Moneta's API offers two types of operations: *safe* and *unsafe* operations.
