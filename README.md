@@ -378,6 +378,8 @@ var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
 ```
 
 ### Sample 6: Calculating the P/E Ratio
+
+```csharp
 using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 {
     Console.WriteLine("\nSample 6: Calculating the P/E Ratio");
@@ -388,3 +390,4 @@ using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 
 	Console.WriteLine($"The P/E Ratio is {peRatio}");
 } // OK!
+```
