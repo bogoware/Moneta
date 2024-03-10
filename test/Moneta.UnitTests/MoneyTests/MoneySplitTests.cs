@@ -8,7 +8,7 @@ public class MoneySplitTests: MoneyBaseTests
 	public void Splitting_byNumberOfParts_cant_create_value()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(Euro, roundingMode: ToEven);
+		var moneyContext = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		const decimal initialAmount = 10M;
 		var sut = moneyContext.CreateMoney(initialAmount);
 
@@ -27,7 +27,7 @@ public class MoneySplitTests: MoneyBaseTests
 	public void Splitting_byNumberOfParts_cant_destroy_value()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(Euro, roundingMode: ToEven);
+		var moneyContext = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		const decimal initialAmount = 10.01M;
 		var sut = moneyContext.CreateMoney(initialAmount);
 
@@ -46,7 +46,11 @@ public class MoneySplitTests: MoneyBaseTests
 	public void Splitting_byWeights_cant_create_value()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
+		var moneyContext = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = ToPositiveInfinity;
+		});
 		const decimal initialAmount = 1M;
 		var weights = new[] { 1, 1, 1 };
 		var sut = moneyContext.CreateMoney(initialAmount);
@@ -67,7 +71,7 @@ public class MoneySplitTests: MoneyBaseTests
 	public void Splitting_byWeights_cant_destroy_value()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(Euro, roundingMode: ToZero);
+		var moneyContext = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		const decimal initialAmount = 1M;
 		var weights = new[] { 1, 1, 1 };
 		var sut = moneyContext.CreateMoney(initialAmount);
@@ -95,7 +99,7 @@ public class MoneySplitTests: MoneyBaseTests
 		decimal expectedResidueAmount)
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(roundingMode: roundingMode);
+		var moneyContext = MonetaContext.Create(options => options.RoundingMode = roundingMode);
 		var sut = moneyContext.CreateMoney(amount);
 
 		// Act
@@ -302,7 +306,7 @@ public class MoneySplitTests: MoneyBaseTests
 	public void Splitting_byFloatWeights_worksWithResidue_02()
 	{
 		// Arrange
-		var moneyContext = new MonetaContext(roundingMode: ToZero);
+		var moneyContext = MonetaContext.Create(options => options.RoundingMode = ToZero);
 		var sut = moneyContext.CreateMoney(10M);
 		
 		// Act

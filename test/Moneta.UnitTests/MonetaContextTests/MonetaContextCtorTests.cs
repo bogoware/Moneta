@@ -35,7 +35,13 @@ public class MonetaContextCtorTests
 	{
 		// Act
 		var currencyProvider = new IsoCurrencyProvider();
-		var sut = new MonetaContext(FakeCurrency.Instance, currencyProvider, MidpointRounding.AwayFromZero, 4);
+		var sut = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = FakeCurrency.Instance;
+			options.RoundingMode = MidpointRounding.AwayFromZero;
+			options.RoundingErrorDecimals = 4;
+			options.CurrencyProvider = currencyProvider;
+		});
 		
 		// Assert
 		sut.DefaultCurrency.Should().Be(FakeCurrency.Instance);
@@ -51,7 +57,7 @@ public class MonetaContextCtorTests
 	{
 		// Arrange
 		var currency = new Currency("CUR", "Currency", "C", 10);
-		var sut = new MonetaContext(roundingErrorDecimals: 4);
+		var sut = MonetaContext.Create(options => options.RoundingErrorDecimals = 4);
 		
 		// Act
 		sut

@@ -6,7 +6,12 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_create_value_005()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToPositiveInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToPositiveInfinity;
+		});
+		
 		var sut = context.CreateMoney(1.48);
 		var subunit = context.CreateMoney(0.05);
 
@@ -24,7 +29,11 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_destroy_value_005()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToZero);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToZero;
+		});
 		var sut = context.CreateMoney(1.48);
 		var subunit = context.CreateMoney(0.05);
 
@@ -42,7 +51,11 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_create_value_025()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToPositiveInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToPositiveInfinity;
+		});
 		var sut = context.CreateMoney(1.23);
 		var subunit = context.CreateMoney(0.25);
 
@@ -60,7 +73,11 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_destroy_value_025()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToZero);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToZero;
+		});
 		var sut = context.CreateMoney(1.23);
 		var subunit = context.CreateMoney(0.25);
 
@@ -78,7 +95,11 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_create_value_500()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToPositiveInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToPositiveInfinity;
+		});
 		var sut = context.CreateMoney(34726351.48);
 		var subunit = context.CreateMoney(5.00);
 
@@ -96,7 +117,11 @@ public class MoneyRoundOffTests : MoneyBaseTests
 	public void RoundToSubunit_cant_destroy_value_500()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: MidpointRounding.ToZero);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = MidpointRounding.ToZero;
+		});
 		var sut = context.CreateMoney(34726351.48);
 		var subunit = context.CreateMoney(5.00);
 

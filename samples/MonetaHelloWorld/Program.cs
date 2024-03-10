@@ -1,13 +1,24 @@
 ﻿using Bogoware.Moneta;
 using Bogoware.Moneta.CurrencyProviders;
-using MonetaHelloWorld;
 
 var currency = new Currency("BITCOIN", "Bitcoin", "B", 8);
-using (var context = new MonetaContext(currency))
+var options = new MonetaContextOptions
+{
+	DefaultCurrency = currency,
+};
+using (var context =  new MonetaContext(options))
 {
 };
 
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+var isoCurrencyProvider = new IsoCurrencyProvider();
+isoCurrencyProvider.TryGetCurrency("EUR", out var euro);
+options = new MonetaContextOptions
+{
+	CurrencyProvider = isoCurrencyProvider,
+	DefaultCurrency = euro!
+};
+
+using (var context = new MonetaContext(options))
 {
 	Console.WriteLine("Sample 1: no rounding errors occurred");
 	var money = context.CreateMoney(1.00M);
@@ -18,7 +29,14 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 	Console.WriteLine($"The final amount is {money}");
 } // OK!
 
-using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+isoCurrencyProvider.TryGetCurrency("USD", out var usDollar);
+options = new MonetaContextOptions
+{
+	CurrencyProvider = isoCurrencyProvider,
+	DefaultCurrency = usDollar!
+};
+
+using (var context = new MonetaContext(options))
 {
 	Console.WriteLine("\nSample 2: rounding errors occurred but were handled");
 	var money = context.CreateMoney(1.00M);
@@ -44,7 +62,7 @@ using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 
 try
 {
-	using var context = new MonetaContext("USD", new IsoCurrencyProvider());
+	using var context = new MonetaContext(options);
 	Console.WriteLine("\nSample 3: rounding errors occurred but were not handled");
 	var money = context.CreateMoney(1.00M);
 
@@ -60,7 +78,7 @@ catch (Exception ex)
 }
 
 // Sample 4: weighted split with unallocated money and rounding error
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+using (var context = new MonetaContext(options))
 {
 	Console.WriteLine("\nSample 4: weighted split with unallocated money and rounding error");
 	var money = context.CreateMoney(11.11);
@@ -74,7 +92,7 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 } // OK!
 
 // Sample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+using (var context = new MonetaContext(options))
 {
 	Console.WriteLine("\nSample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)");
 	var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
@@ -91,7 +109,7 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 } // OK!
 
 // Sample 6: Calculating the P/E Ratio
-using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+using (var context = new MonetaContext(options))
 {
 	Console.WriteLine("\nSample 6: Calculating the P/E Ratio");
 	var price = context.CreateMoney(100);

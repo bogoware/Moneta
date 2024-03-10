@@ -2,10 +2,36 @@ using Bogoware.Moneta.CurrencyProviders;
 
 namespace Bogoware.Moneta;
 
+public sealed class MonetaContextOptions
+{
+	/// <summary>
+	/// The default number of decimals used for rounding errors detection.
+	/// <seealso cref="RoundingErrorDecimals"/>
+	/// </summary>
+	public const int DefaultRoundingErrorDecimals = 8;
+
+	public ICurrency DefaultCurrency { get; set; } = UndefinedCurrency.Instance;
+	public ICurrencyProvider CurrencyProvider { get; set; } = new NullCurrencyProvider();
+	public MidpointRounding RoundingMode { get; set; } = default;
+
+	private int _roundingErrorDecimals = DefaultRoundingErrorDecimals;
+
+	public int RoundingErrorDecimals
+	{
+		get => _roundingErrorDecimals;
+		set
+		{
+			ArgumentOutOfRangeException.ThrowIfLessThan(value, 4);
+
+			_roundingErrorDecimals = value;
+		}
+	}
+}
+
 /// <summary>
 /// A monetary context. 
 /// </summary>
-public sealed class MonetaContext: IDisposable
+public sealed class MonetaContext : IDisposable
 {
 	/// <summary>
 	/// The default number of decimals used for rounding errors detection.
@@ -38,7 +64,7 @@ public sealed class MonetaContext: IDisposable
 	/// </summary>
 	public int RoundingErrorDecimals { get; }
 
-	private List<RoundingOperationError> InternalRoundingErrors { get; }
+	private List<RoundingOperationError> InternalRoundingErrors { get; } = new();
 
 	/// <summary>
 	/// The rounding errors occurred during operations performed without rounding error handling.
@@ -57,7 +83,7 @@ public sealed class MonetaContext: IDisposable
 	/// <param name="currencyProvider">The currency provider used to retrieve currencies. Default: <see cref="NullCurrencyProvider"/>.</param>
 	/// <param name="roundingMode">The rounding mode used for monetary operations and internal error rounding detection. Default: <see cref="MidpointRounding.ToEven"/>.</param>
 	/// <param name="roundingErrorDecimals">The number of decimal places used for error rounding detection, default is <see cref="DefaultRoundingErrorDecimals"/>.</param>
-	public MonetaContext(
+	private MonetaContext(
 		ICurrency? defaultCurrency = default,
 		ICurrencyProvider? currencyProvider = default,
 		MidpointRounding roundingMode = default,
@@ -67,18 +93,47 @@ public sealed class MonetaContext: IDisposable
 		DefaultCurrency = defaultCurrency ?? UndefinedCurrency.Instance;
 		CurrencyProvider = currencyProvider ?? new NullCurrencyProvider();
 		RoundingMode = roundingMode;
-		InternalRoundingErrors = new();
 		RoundingErrorDecimals = roundingErrorDecimals;
 	}
 
+	public MonetaContext()
+		: this(new())
+	{
+	}
+
+	public MonetaContext(MonetaContextOptions options)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		DefaultCurrency = options.DefaultCurrency;
+		CurrencyProvider = options.CurrencyProvider;
+		RoundingMode = options.RoundingMode;
+		RoundingErrorDecimals = options.RoundingErrorDecimals;
+	}
+
+	public static MonetaContext Create(Action<MonetaContextOptions> configure)
+	{
+		var options = new MonetaContextOptions();
+		configure(options);
+		return new(options);
+	}
+
 	/// <inheritdoc cref="MonetaContext(Bogoware.Moneta.Abstractions.ICurrency?,Bogoware.Moneta.Abstractions.ICurrencyProvider?,System.MidpointRounding,int)"/>
-	public MonetaContext(
+	public static MonetaContext Create(
 		string defaultCurrency,
 		ICurrencyProvider currencyProvider,
 		MidpointRounding roundingMode = default,
 		int roundingErrorDecimals = DefaultRoundingErrorDecimals)
-		: this(currencyProvider.GetCurrency(defaultCurrency), currencyProvider, roundingMode, roundingErrorDecimals)
 	{
+		ArgumentNullException.ThrowIfNull(currencyProvider);
+		var options = new MonetaContextOptions
+		{
+			DefaultCurrency = currencyProvider.GetCurrency(defaultCurrency),
+			CurrencyProvider = currencyProvider,
+			RoundingMode = roundingMode,
+			RoundingErrorDecimals = roundingErrorDecimals
+		};
+		
+		return new(options);
 	}
 
 	#region Money Factory Methods (Safe ones)
@@ -92,7 +147,7 @@ public sealed class MonetaContext: IDisposable
 		if (currency.DecimalPlaces > RoundingErrorDecimals)
 			throw new MonetaryContextInvalidConfigurationException(
 				$"The currency {currency.Code} has more decimal places ({currency.DecimalPlaces}) than the rounding error decimals ({RoundingErrorDecimals}).");
-		
+
 		var decimalAmount = Money.ValidateAndGetDecimalValue(amount);
 		var approximatedAmount = Math.Round(decimalAmount, RoundingErrorDecimals, roundingMode);
 		var newAmount = Math.Round(approximatedAmount, currency.DecimalPlaces, roundingMode);
@@ -170,7 +225,7 @@ public sealed class MonetaContext: IDisposable
 	/// Returns true if the specified <see cref="Money"/> instance belongs to the <see cref="MonetaContext"/>.
 	/// </summary>
 	public bool Owns(Money money) => money.Context == this;
-	
+
 	/// <summary>
 	/// Throws an exception if the context has rounding errors.
 	/// </summary>
@@ -180,7 +235,7 @@ public sealed class MonetaContext: IDisposable
 		if (HasRoundingErrors)
 			throw new MonetaryContextWithRoundingErrorsException(InternalRoundingErrors);
 	}
-	
+
 	/// <summary>
 	/// Clears the rounding errors.
 	/// </summary>
@@ -191,6 +246,6 @@ public sealed class MonetaContext: IDisposable
 		if (roundingOperationError.Error == 0) return;
 		InternalRoundingErrors.Add(roundingOperationError);
 	}
-	
+
 	public void Dispose() => EnsureNoRoundingErrors();
 }

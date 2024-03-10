@@ -12,7 +12,11 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_cant_create_value()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = ToPositiveInfinity;
+		});
 		var sut = context.CreateMoney(1.00M);
 		var other = 0.001M;
 		
@@ -28,7 +32,11 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_cant_destroy_value()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: ToNegativeInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = ToNegativeInfinity;
+		});
 		var sut = context.CreateMoney(1.00M);
 		var other = 0.001M;
 		
@@ -58,7 +66,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
+		var context = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		var sut = context.CreateMoney(1.00M);
 		const double amount = 0.12345;
 
@@ -75,7 +83,7 @@ public class MoneyAddTests : MoneyBaseTests
 	public void Adding_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaContext(defaultCurrency: Euro);
+		var context = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		var sut = context.CreateMoney(1.00M);
 		var amount = 0.12345;
 

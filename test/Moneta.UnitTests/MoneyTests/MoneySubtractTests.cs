@@ -10,7 +10,11 @@ public class MoneySubtractTests : MoneyBaseTests
 	public void Subtracting_cant_create_value()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: ToPositiveInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = ToPositiveInfinity;
+		});
 		var sut = context.CreateMoney(0.99M);
 		const decimal other = -0.001M;
 
@@ -29,7 +33,11 @@ public class MoneySubtractTests : MoneyBaseTests
 	public void Subtracting_cant_destroy_value()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro, roundingMode: ToNegativeInfinity);
+		var context = MonetaContext.Create(options =>
+		{
+			options.DefaultCurrency = Euro;
+			options.RoundingMode = ToNegativeInfinity;
+		});
 		var sut = context.CreateMoney(1.00M);
 		const decimal other = -0.001M;
 
@@ -62,7 +70,7 @@ public class MoneySubtractTests : MoneyBaseTests
 	public void Subtracting_withError_isSafe()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro);
+		var context = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		var sut = context.CreateMoney(1.00M);
 		const double other = 0.12345;
 
@@ -82,7 +90,7 @@ public class MoneySubtractTests : MoneyBaseTests
 	public void Subtracting_withoutError_isUnsafe()
 	{
 		// Arrange
-		var context = new MonetaContext(Euro);
+		var context = MonetaContext.Create(options => options.DefaultCurrency = Euro);
 		var sut = context.CreateMoney(1.00M);
 		const double amount = 0.12345;
 
@@ -134,7 +142,11 @@ public class MoneySubtractTests : MoneyBaseTests
 	[Fact]
 	public void MinusOperator_ByTwoEqualAmounts_GetZero()
 	{
-		using var context = new MonetaContext("EUR", new IsoCurrencyProvider());
+		using var context = MonetaContext.Create(options =>
+		{
+			options.CurrencyProvider = new IsoCurrencyProvider();
+			options.DefaultCurrency = options.CurrencyProvider.GetCurrency("EUR");
+		});
 
 		var lhs = context.CreateMoney(1000);
 		var rhs = context.CreateMoney(1000);
