@@ -279,10 +279,7 @@ These samples are available in the [Moneta.Samples](./samples/MonetaHelloWorld) 
 ### Sample 1: no rounding errors occurred
 
 ```csharp
-using Bogoware.Moneta;
-using Bogoware.Moneta.CurrencyProviders;
-
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options))
 {
 	var money = context.CreateMoney(1.00M);
 
@@ -295,7 +292,7 @@ using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
 ### Sample 2: handled rounding errors
 
 ```csharp
-using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options)))
 {
 	var money = context.CreateMoney(1.00M);
 
@@ -320,7 +317,7 @@ using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 ### Sample 3: unhanded rounding errors
 
 ```csharp
-using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options))
 {
 	var money = context.CreateMoney(1.00M);
 
@@ -335,7 +332,7 @@ using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
 ###  Sample 4: weighted split with unallocated money and rounding error
 
 ```csharp
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options))
 {
     var money = context.CreateMoney(11.11);
     var weights = Enumerable.Repeat(0.333333, 3);
@@ -360,7 +357,7 @@ The unallocated amount is EUR 0.01
 ### Sample 5: Round-Off Cash to 0.05 EUR (Cash rounding)
     
 ```csharp
-using (var context = new MonetaContext("EUR", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options))
 {
 Console.WriteLine("\nSample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)");
 var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
@@ -380,7 +377,7 @@ var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
 ### Sample 6: Calculating the P/E Ratio
 
 ```csharp
-using (var context = new MonetaContext("USD", new IsoCurrencyProvider()))
+using (var context = new MonetaContex(options))
 {
     Console.WriteLine("\nSample 6: Calculating the P/E Ratio");
     var price = context.CreateMoney(100);
