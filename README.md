@@ -374,6 +374,15 @@ var amounts = Enumerable.Repeat(context.CreateMoney(3.37), 17);
 } // OK!
 ```
 
+will produce the following output:
+
+```
+Sample 5: Rounding the final amount to the nearest 0.05 EUR (Cash rounding)
+The original total amount is 57.29
+The cash total amount is 57.25
+The discounted amount is 0.04
+```
+
 ### Sample 6: Calculating the P/E Ratio
 
 ```csharp
